@@ -151,7 +151,9 @@ The tools in `tools/` are ready to import and attach:
 | `customer_database_search` | `from .tools.customersearch import customer_database_search` | Full profile + transaction history |
 | `vertex_vector_search` | `from .tools.productsearch import vertex_vector_search` | Semantic search over your website |
 
-Add them to the agent's `tools` list to start using them.
+Add them to an agent's `tools` list to start using them.
+
+To build multi-agent pipelines, pass other `Agent` instances via `sub_agents=[...]`. Each sub-agent is invoked by name, and any inputs are forwarded as named keyword arguments matching its tool signatures.
 
 ---
 
