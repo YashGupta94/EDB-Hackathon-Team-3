@@ -1,4 +1,4 @@
-# EDB Hackathon Starter
+# Hackathon Starter
 
 A starter template for building AI agents with [Google ADK](https://google.github.io/adk-docs/), Vertex AI Search, and Firestore. It includes synthetic data generation, a vector search tool, and a customer database tool — ready for you to wire into your own agent.
 
