@@ -13,15 +13,13 @@ ENV UV_COMPILE_BYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Copy project files
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock main.py .python-version ./
+COPY bank_agent ./bank_agent/
 
 # Install dependencies into the system environment
 # --system tells uv to install without a virtualenv (ideal for containers)
 #RUN uv pip install --system --requirement pyproject.toml
-RUN uv sync --frozen --no-dev
-
-# Copy the rest of your agent code
-COPY . .
+RUN uv sync --frozen --no-dev 
 
 ENV PATH="/app/.venv/bin:$PATH"
 
