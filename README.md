@@ -162,8 +162,6 @@ Terraform will grant this identity the roles it needs during `tf-deploy`.
 
 ### 1. Install dependencies
 
-All commands below must be run from the `ADKAgents` directory:
-
 ```bash
 cd ADKAgents
 uv sync
@@ -182,6 +180,7 @@ gcloud config set project {YOUR_PROJECT_ID}
 Run the interactive setup — it will write `bank_agent/.env`:
 
 ```bash
+cd ADKAgents
 uv run setup-env
 ```
 
@@ -199,6 +198,7 @@ You'll be prompted for:
 ### 4. Deploy the Vertex AI Search data store
 
 ```bash
+cd ADKAgents
 uv run tf-deploy
 ```
 
@@ -207,6 +207,7 @@ This runs `terraform init` + `terraform apply`, builds and pushes your container
 You can also run individual Terraform commands via the `tf` wrapper:
 
 ```bash
+cd ADKAgents
 uv run tf plan
 uv run tf apply
 uv run tf output -raw vertex_data_store_id
@@ -218,6 +219,7 @@ uv run tf destroy
 If your deployment is in a broken state and you need to start completely from scratch, use:
 
 ```bash
+cd ADKAgents
 uv run obliterate
 ```
 
