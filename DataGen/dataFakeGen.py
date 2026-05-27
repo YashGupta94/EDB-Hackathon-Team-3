@@ -2,6 +2,9 @@ import pandas as pd
 from faker import Faker
 import random
 from datetime import datetime, timedelta
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).parent
 
 fake = Faker('en_GB')
 Faker.seed(42) # For reproducibility
@@ -97,6 +100,6 @@ df_transactions = pd.DataFrame(all_transactions)
 
 
 # Save to CSV for your Vertex AI Search / Vector DB
-df_customers.to_csv("customers.csv", index=False)
-df_accounts.to_csv("accounts.csv", index=False)
-df_transactions.to_csv("transactions.csv", index=False)
+df_customers.to_csv(SCRIPT_DIR / "customers.csv", index=False)
+df_accounts.to_csv(SCRIPT_DIR / "accounts.csv", index=False)
+df_transactions.to_csv(SCRIPT_DIR / "transactions.csv", index=False)

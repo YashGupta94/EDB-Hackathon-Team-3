@@ -3,17 +3,20 @@ import json
 import os
 import shutil
 from collections import defaultdict
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).parent
 
 def prepare_nosql_documents():
     # 1. Ensure a clean output directory
-    output_dir = 'documents'
-    if os.path.exists(output_dir):
+    output_dir = SCRIPT_DIR / 'documents'
+    if output_dir.exists():
         shutil.rmtree(output_dir)
-    os.makedirs(output_dir)
+    output_dir.mkdir()
 
     # 2. Load Customers
     customers = {}
-    with open('customers.csv', mode='r', encoding='utf-8') as f:
+    with open(SCRIPT_DIR / 'customers.csv', mode='r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
             row['accounts'] = []
@@ -22,7 +25,7 @@ def prepare_nosql_documents():
 
     # 3. Load Accounts and create account_to_customer mapping
     account_to_customer = {}
-    with open('accounts.csv', mode='r', encoding='utf-8') as f:
+    with open(SCRIPT_DIR / 'accounts.csv', mode='r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
             customer_id = row.pop('customer_id') # Remove redundant customer_id
@@ -38,7 +41,7 @@ def prepare_nosql_documents():
                 customers[customer_id]['accounts'].append(row)
 
     # 4. Load Transactions
-    with open('transactions.csv', mode='r', encoding='utf-8') as f:
+    with open(SCRIPT_DIR / 'transactions.csv', mode='r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
             account_id = row['account_id']
@@ -52,7 +55,7 @@ def prepare_nosql_documents():
                 customers[customer_id]['transactions'].append(row)
 
     # 5. Sort transactions and write individual JSON files
-    print(f"Generating documents in {output_dir}/...")
+    print(f"Generating documents in {output_dir}...")
     count = 0
     for customer_id, data in customers.items():
         # Sort transactions by date descending

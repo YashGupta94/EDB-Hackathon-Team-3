@@ -1,13 +1,16 @@
 import sqlite3
 import pandas as pd
 import os
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).parent
 
 def generate_database():
-    db_name = '../ADKAgents/bank_data.db'
+    db_name = SCRIPT_DIR.parent / "ADKAgents" / "bank_data.db"
 
     # Check if DB already exists; remove it to start fresh if needed
-    if os.path.exists(db_name):
-        os.remove(db_name)
+    if db_name.exists():
+        db_name.unlink()
         print(f"Cleaned up old {db_name}")
 
     # Connect to (and create) the database file
@@ -15,10 +18,9 @@ def generate_database():
 
     try:
         # Load your CSVs into Pandas DataFrames
-        # Ensure these filenames match exactly what is on your laptop
-        customers = pd.read_csv('customers.csv')
-        accounts = pd.read_csv('accounts.csv')
-        transactions = pd.read_csv('transactions.csv')
+        customers = pd.read_csv(SCRIPT_DIR / 'customers.csv')
+        accounts = pd.read_csv(SCRIPT_DIR / 'accounts.csv')
+        transactions = pd.read_csv(SCRIPT_DIR / 'transactions.csv')
 
         # Write the DataFrames to SQL tables
         customers.to_sql('customers', conn, index=False, if_exists='replace')
