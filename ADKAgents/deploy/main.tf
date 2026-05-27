@@ -83,7 +83,16 @@ locals {
   image_url = "us-central1-docker.pkg.dev/${var.project_id}/agent-repo/agent:latest"
 }
 
-# 1. Create the Data Store
+# 1. Firestore database (Native mode, default database)
+resource "google_firestore_database" "default" {
+  project     = var.project_id
+  name        = "(default)"
+  location_id = "nam5"
+  type        = "FIRESTORE_NATIVE"
+  depends_on  = [time_sleep.api_propagation]
+}
+
+# 3. Create the Data Store
 resource "google_discovery_engine_data_store" "website_datastore" {
   project                     = var.project_id
   location                    = "global"
@@ -96,7 +105,7 @@ resource "google_discovery_engine_data_store" "website_datastore" {
   depends_on                  = [google_project_service.apis]
 }
 
-# 2. Crawl all pages under the domain
+# 4. Crawl all pages under the domain
 resource "google_discovery_engine_target_site" "all_pages" {
   project              = var.project_id
   location             = google_discovery_engine_data_store.website_datastore.location
@@ -105,7 +114,7 @@ resource "google_discovery_engine_target_site" "all_pages" {
   type                 = "INCLUDE"
 }
 
-# 3. Create the Search AI Application
+# 5. Create the Search AI Application
 resource "google_discovery_engine_search_engine" "website_search_app" {
   project        = var.project_id
   location       = google_discovery_engine_data_store.website_datastore.location
@@ -120,7 +129,7 @@ resource "google_discovery_engine_search_engine" "website_search_app" {
   }
 }
 
-# 4. IAM — grant the agent's identity the roles it needs
+# 6. IAM — grant the agent's identity the roles it needs
 data "google_project" "project" {
   project_id = var.project_id
   depends_on = [google_project_service.apis]
@@ -151,7 +160,15 @@ resource "google_project_iam_member" "cloudrun_artifact_reader" {
   depends_on = [google_project_service.apis]
 }
 
-# 5. Cloud Run service (only when CONTAINER_IMAGE is set)
+# Allow Cloud Run's default service account to read/write Firestore
+resource "google_project_iam_member" "cloudrun_firestore" {
+  project    = var.project_id
+  role       = "roles/datastore.user"
+  member     = local.compute_sa
+  depends_on = [google_firestore_database.default]
+}
+
+# 7. Cloud Run service (only when CONTAINER_IMAGE is set)
 resource "google_cloud_run_v2_service" "agent" {
   count               = var.container_image != "" ? 1 : 0
   project             = var.project_id
