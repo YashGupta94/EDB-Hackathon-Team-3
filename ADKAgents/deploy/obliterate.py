@@ -72,6 +72,7 @@ def main() -> None:
     * Cloud Run service
     * Artifact Registry repository
     * Discovery Engine data store + search engine
+    * Firestore database (default)
     * IAM bindings
 
   Local files that will be removed:
