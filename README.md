@@ -271,6 +271,9 @@ uv run python upload_to_datestore.py   # Upload JSON documents to Firestore
 ```bash
 cd ../ADKAgents
 adk web
+
+# or, if you don't have `adk` installed globally
+uv run adk web
 ```
 
 ---
@@ -340,12 +343,13 @@ uv run tf init
 #    Pass an empty container_image so Cloud Run is skipped until the image exists
 uv run tf apply -auto-approve -var=container_image=
 
-# 4. Build and push the container image via Cloud Build
+# 4. Build and push the container image via Cloud Build 
+#    You can run step 4 & 5 every time you want to redeploy your agent with recent changes
 IMAGE_URL=$(uv run tf output -raw image_url)
 gcloud builds submit --tag "$IMAGE_URL" --project YOUR_PROJECT_ID .
 
 # 5. Phase 2 — deploy Cloud Run with the built image
-uv run tf apply -auto-approve -replace=google_cloud_run_v2_service.agent[0]
+uv run tf apply -auto-approve '-replace=google_cloud_run_v2_service.agent[0]'
 uv run tf apply -auto-approve
 
 # 6. Print outputs
