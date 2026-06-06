@@ -6,10 +6,13 @@ from google.cloud import firestore
 import os
 from typing import Any
 
+from ..observability.tool_tracer import traced_tool
+
 
 load_dotenv()
 
 
+@traced_tool
 def customer_id_search(customer_id: str, tool_context: ToolContext) -> dict[str, str]:
     """Retrieves customer information for a particular customer ID, used for verifying identity.
 
@@ -79,6 +82,7 @@ def customer_id_search(customer_id: str, tool_context: ToolContext) -> dict[str,
         return {"status": "error", "error_message": f"Database Error: {str(e)}"}
 
 
+@traced_tool
 def customer_database_search(tool_context: ToolContext) -> str:
     """
     Retrieves the currently verified customer's profile and recent financial activity.

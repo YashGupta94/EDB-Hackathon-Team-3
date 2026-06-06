@@ -84,14 +84,21 @@ EDB-Hackathon-Starter/
     ├── bank_agent/
     │   ├── agent.py                # Your base agent — start here
     │   ├── prompt.py               # Agent instructions
+    │   ├── observability/          # Built-in tracing & metrics
+    │   │   ├── __init__.py         # setup_observability() entry point
+    │   │   ├── config.py           # Env vars, model pricing
+    │   │   ├── metrics.py          # Thread-safe in-memory metrics store
+    │   │   ├── callbacks.py        # ADK before/after model callbacks
+    │   │   ├── tool_tracer.py      # @traced_tool decorator
+    │   │   └── otel_setup.py       # OpenTelemetry SDK bootstrap
     │   └── tools/
     │       ├── customersearch.py   # Customer lookup (Firestore or SQLite)
     │       └── productsearch.py    # Vertex AI vector search
     ├── deploy/
     │   ├── main.tf                 # Terraform — provisions all GCP infrastructure
-    │   ├── tf_deploy.py            # One-shot full deploy (infra + image + Cloud Run)
-    │   ├── tf_run.py               # Terraform wrapper (passes .env as TF vars)
-    │   └── obliterate.py           # Destroy all resources and reset state
+    │   ├── tf_deploy.py           # One-shot full deploy (infra + image + Cloud Run)
+    │   ├── tf_run.py              # Terraform wrapper (passes .env as TF vars)
+    │   └── obliterate.py          # Destroy all resources and reset state
     └── setup_env.py                # Interactive .env setup
 ```
 
@@ -324,6 +331,61 @@ The tools in `tools/` are ready to import and attach:
 Add them to an agent's `tools` list to start using them.
 
 To build multi-agent pipelines, pass other `Agent` instances via `sub_agents=[...]`. Each sub-agent is invoked by name, and any inputs are forwarded as named keyword arguments matching its tool signatures.
+
+---
+
+## Observability
+
+The starter pack ships with a **built-in observability layer** that automatically captures LLM and tool telemetry. No additional setup is required — it works out of the box.
+
+### What is captured
+
+| Signal | Details |
+|---|---|
+| **Token usage** | Input / output / total tokens per LLM call |
+| **Cost** | Estimated USD cost per call, per session, per turn, or cumulative |
+| **Latency** | Wall-clock time for each LLM call (avg, p50, p95) |
+| **Prompt / response** | First 500 chars of the user prompt and model response (opt-in) |
+| **Tool calls** | Per-tool invocation count, duration, success / error rates |
+
+### How it works
+
+1. **`before_model_callback`** stamps a start timestamp and (optionally) snapshots the user prompt.
+2. **`after_model_callback`** extracts `usage_metadata` from the LLM response, computes latency and cost, and pushes a record to the in-memory metrics store.
+3. **`@traced_tool`** wraps each tool function to measure execution time and record success/failure.
+4. **OpenTelemetry** span attributes are emitted automatically when the SDK is available.
+
+### API endpoints
+
+Three JSON endpoints are added to the FastAPI app — useful for live demos and debugging:
+
+| Route | Description |
+|---|---|
+| `GET /obs/summary` | Aggregated stats: total tokens, cost, latency percentiles. Optional `?granularity=session\|turn\|cumulative` query param. |
+| `GET /obs/traces` | Individual LLM call records (newest first). Optional `?limit=N`. |
+| `GET /obs/tools` | Per-tool call counts, success rates, and duration percentiles. |
+| `POST /obs/reset` | Clear all recorded observability data. |
+
+### Configuration
+
+All settings are controlled via environment variables in `bank_agent/.env`:
+
+| Variable | Default | Description |
+|---|---|---|
+| `TRACE_TO_CLOUD` | `false` | Set to `true` to export traces to Cloud Trace and metrics to Cloud Monitoring (requires GCP credentials). |
+| `LOG_LLM_CONTENT` | `true` | Set to `false` to suppress prompt/response content from logs (token/cost metrics are still recorded). Recommended when handling PII. |
+| `COST_GRANULARITY` | `session` | How cost is aggregated: `session`, `turn`, or `cumulative`. |
+| `GEMINI_MODEL` | `gemini-2.5-flash` | Model name used for cost calculation. |
+
+### Cloud Trace integration
+
+When `TRACE_TO_CLOUD=true`:
+
+- Traces are exported to **Cloud Trace** via the `opentelemetry-exporter-gcp-trace` package.
+- Custom metrics (token counts, cost gauges) are pushed to **Cloud Monitoring** via `opentelemetry-exporter-gcp-monitoring`.
+- Application Default Credentials (ADC) are used — make sure `gcloud auth application-default login` has been run, or that the Cloud Run service account has the required permissions.
+
+When `TRACE_TO_CLOUD=false` (default), traces are printed to stdout via the `ConsoleSpanExporter`.
 
 ---
 
