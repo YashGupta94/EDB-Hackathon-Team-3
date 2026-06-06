@@ -6,16 +6,20 @@ from dotenv import load_dotenv
 from google.adk.tools.tool_context import ToolContext
 from google.cloud import bigquery
 
+from ..observability.tool_tracer import traced_tool
+
 load_dotenv()
 
 BQ_DATASET = os.getenv("BQ_DATASET", "")
 PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "")
 
 
+
 def _bq_client() -> bigquery.Client:
     return bigquery.Client(project=PROJECT_ID if PROJECT_ID else None)
 
 
+@traced_tool
 def customer_id_search(customer_id: str, tool_context: ToolContext) -> dict:
     """Retrieves customer information for a particular customer ID, used for verifying identity.
 
@@ -79,6 +83,7 @@ def customer_id_search(customer_id: str, tool_context: ToolContext) -> dict:
         return {"status": "error", "error_message": f"Database Error: {str(e)}"}
 
 
+@traced_tool
 def customer_database_search(tool_context: ToolContext) -> str:
     """
     Retrieves the currently verified customer's profile and recent financial activity.

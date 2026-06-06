@@ -6,6 +6,11 @@ from google.adk.agents import Agent
 from google.adk.models.google_llm import Gemini
 from google.genai import Client
 
+from .observability import (
+    after_model_callback,
+    before_model_callback,
+    setup_observability,
+)
 from .prompt import AGENT_INSTRUCTION
 from .tools.bigquery_tool import run_bigquery_query
 from .tools.customersearch import customer_database_search, customer_id_search
@@ -27,10 +32,15 @@ class VertexGemini(Gemini):
         )
 
 
+# Initialise OpenTelemetry exporters and the metrics store.
+setup_observability()
+
 root_agent = Agent(
     name="bank_agent",
     model=VertexGemini(model="gemini-2.5-flash"),
     description="A helpful banking assistant.",
     instruction=AGENT_INSTRUCTION,
     tools=[customer_id_search, customer_database_search, vertex_vector_search, run_bigquery_query, lookup_user_orders, check_product_stock, sales_reporting_query],
+    before_model_callback=before_model_callback,
+    after_model_callback=after_model_callback,
 )

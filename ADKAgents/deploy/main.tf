@@ -172,6 +172,29 @@ resource "google_project_iam_member" "cloudrun_bq_job_user" {
   depends_on = [google_project_service.apis]
 }
 
+# Allow Cloud Run's default service account to access Discovery Engine (Vertex Search) and publish traces/metrics
+resource "google_project_iam_member" "cloudrun_discoveryengine" {
+  project    = var.project_id
+  role       = "roles/discoveryengine.viewer"
+  member     = local.compute_sa
+  depends_on = [google_project_service.apis]
+}
+
+resource "google_project_iam_member" "cloudrun_trace_agent" {
+  project    = var.project_id
+  role       = "roles/cloudtrace.agent"
+  member     = local.compute_sa
+  depends_on = [google_project_service.apis]
+}
+
+resource "google_project_iam_member" "cloudrun_metric_writer" {
+  project    = var.project_id
+  role       = "roles/monitoring.metricWriter"
+  member     = local.compute_sa
+  depends_on = [google_project_service.apis]
+}
+
+
 # 7. Cloud Run service (only when CONTAINER_IMAGE is set)
 resource "google_cloud_run_v2_service" "agent" {
   count               = var.container_image != "" ? 1 : 0

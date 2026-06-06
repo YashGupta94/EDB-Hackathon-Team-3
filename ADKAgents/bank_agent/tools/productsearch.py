@@ -5,11 +5,14 @@ from google.cloud import discoveryengine_v1beta as discoveryengine
 from vertexai.generative_models import GenerativeModel
 from dotenv import load_dotenv
 
+from ..observability.tool_tracer import traced_tool
+
 load_dotenv()
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT")
 DATA_STORE_ID = os.environ.get("VERTEX_DATA_STORE_ID")
 vertexai.init(project=f"{PROJECT_ID}", location="us-central1")
 
+@traced_tool
 def vertex_vector_search(query: str) -> str:
     """
     Retrieves information from Lloyds Bank and provides a summarized
