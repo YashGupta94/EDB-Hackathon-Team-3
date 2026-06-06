@@ -69,11 +69,14 @@ def _extract_response_text(llm_response: LlmResponse) -> str:
 
 def _session_id_from_ctx(callback_context: CallbackContext) -> str:
     """Extract a session identifier from the callback context."""
-    # callback_context exposes the invocation context; pull whatever is available.
     try:
-        return str(getattr(callback_context, "session_id", None) or "unknown")
+        # CallbackContext exposes a .session property that returns the Session object
+        session = callback_context.session
+        if session is not None:
+            return str(session.id or "unknown")
     except Exception:
-        return "unknown"
+        pass
+    return "unknown"
 
 
 # ---------------------------------------------------------------------------
@@ -148,14 +151,15 @@ def after_model_callback(
 
     # 7. Log ---------------------------------------------------------------
     logger.info(
-        "LLM call: model=%s in=%d out=%d total=%d cost=$%.6f latency=%.1fms",
-        model_name, input_tokens, output_tokens, total_tokens, cost_usd, latency_ms,
+        "LLM call: model=%s in=%d out=%d total=%d cost=$%.6f latency=%.1fms session=%s",
+        model_name, input_tokens, output_tokens, total_tokens, cost_usd, latency_ms, session_id,
     )
 
     # 8. OTEL span attributes (if tracer is available) ---------------------
     if _tracer is not None:
         span = otel_trace.get_current_span()
         if span and span.is_recording():
+            span.set_attribute("llm.session_id", session_id)
             span.set_attribute("llm.model", model_name)
             span.set_attribute("llm.input_tokens", input_tokens)
             span.set_attribute("llm.output_tokens", output_tokens)
