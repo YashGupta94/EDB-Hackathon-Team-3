@@ -117,6 +117,10 @@ def after_model_callback(
     total_tokens = input_tokens + output_tokens
 
     # 3. Cost --------------------------------------------------------------
+    agent_name = getattr(callback_context, "agent_name", None)
+    if not agent_name:
+        agent_name = getattr(getattr(callback_context, "agent", None), "name", "bank_agent") or "bank_agent"
+
     model_name = getattr(
         getattr(callback_context, "agent", None), "model", "gemini-2.5-flash"
     ) or "gemini-2.5-flash"
@@ -139,6 +143,7 @@ def after_model_callback(
         timestamp=time.time(),
         session_id=session_id,
         model=model_name,
+        agent_name=agent_name,
         input_tokens=input_tokens,
         output_tokens=output_tokens,
         total_tokens=total_tokens,
@@ -151,8 +156,8 @@ def after_model_callback(
 
     # 7. Log ---------------------------------------------------------------
     logger.info(
-        "LLM call: model=%s in=%d out=%d total=%d cost=$%.6f latency=%.1fms session=%s",
-        model_name, input_tokens, output_tokens, total_tokens, cost_usd, latency_ms, session_id,
+        "LLM call: agent=%s model=%s in=%d out=%d total=%d cost=$%.6f latency=%.1fms session=%s",
+        agent_name, model_name, input_tokens, output_tokens, total_tokens, cost_usd, latency_ms, session_id,
     )
 
     # 8. OTEL span attributes (if tracer is available) ---------------------
@@ -160,6 +165,7 @@ def after_model_callback(
         span = otel_trace.get_current_span()
         if span and span.is_recording():
             span.set_attribute("llm.session_id", session_id)
+            span.set_attribute("llm.agent_name", agent_name)
             span.set_attribute("llm.model", model_name)
             span.set_attribute("llm.input_tokens", input_tokens)
             span.set_attribute("llm.output_tokens", output_tokens)

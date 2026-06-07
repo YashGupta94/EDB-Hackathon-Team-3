@@ -275,6 +275,17 @@ uv run python upload_to_datestore.py   # Upload JSON documents to Firestore
 
 ### 6. Run the agent locally
 
+To launch the agent locally along with the **Observability Dashboard** (`/obs`), run `main.py` directly using `uv`:
+
+```bash
+cd ../ADKAgents
+uv run python main.py
+```
+
+This launches the agent server on `http://localhost:8080/`. You can view the agent playground at `http://localhost:8080/` and the observability dashboard at `http://localhost:8080/obs`.
+
+Alternatively, if you only need the default agent playground without the observability endpoints, you can run:
+
 ```bash
 cd ../ADKAgents
 adk web
