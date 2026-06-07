@@ -30,6 +30,7 @@ class LlmCallRecord:
     total_tokens: int
     cost_usd: float
     latency_ms: float
+    agent_name: str = "bank_agent"
     prompt_preview: str | None = None
     response_preview: str | None = None
 
@@ -169,6 +170,7 @@ class ObservabilityStore:
                 "timestamp": r.timestamp,
                 "session_id": r.session_id,
                 "model": r.model,
+                "agent_name": r.agent_name,
                 "input_tokens": r.input_tokens,
                 "output_tokens": r.output_tokens,
                 "total_tokens": r.total_tokens,

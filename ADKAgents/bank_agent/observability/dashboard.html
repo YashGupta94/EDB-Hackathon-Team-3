@@ -298,6 +298,7 @@
     }
     tr:hover td { background: rgba(59,130,246,0.04); }
 
+    td.col-agent   { color: var(--accent-blue); }
     td.col-model   { color: var(--accent-violet); }
     td.col-tokens  { color: var(--accent-cyan); }
     td.col-cost    { color: var(--accent-emerald); }
@@ -544,6 +545,7 @@
               <tr>
                 <th>Time</th>
                 <th>Session</th>
+                <th>Agent</th>
                 <th>Model</th>
                 <th>Input Tok</th>
                 <th>Output Tok</th>
@@ -554,7 +556,7 @@
               </tr>
             </thead>
             <tbody id="traces-tbody">
-              <tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:32px;">No traces yet — send a chat message to the agent</td></tr>
+              <tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:32px;">No traces yet — send a chat message to the agent</td></tr>
             </tbody>
           </table>
         </div>
@@ -708,7 +710,7 @@
       const badge = document.getElementById('trace-badge');
       if (!traces || traces.length === 0) {
         badge.textContent = '0';
-        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:32px;">No traces yet — send a chat message to the agent</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:32px;">No traces yet — send a chat message to the agent</td></tr>`;
         return;
       }
       badge.textContent = traces.length;
@@ -716,6 +718,7 @@
         <tr>
           <td>${fmtTime(t.timestamp)}</td>
           <td title="${t.session_id || ''}">${truncate(t.session_id, 16)}</td>
+          <td class="col-agent">${t.agent_name || '—'}</td>
           <td class="col-model">${t.model || '—'}</td>
           <td class="col-tokens">${fmtNum(t.input_tokens)}</td>
           <td class="col-tokens">${fmtNum(t.output_tokens)}</td>
