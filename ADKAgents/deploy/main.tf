@@ -39,6 +39,11 @@ variable "data_store_id" {
   description = "ID for the Discovery Engine data store. Auto-incremented by tf-deploy if the previous one is still being deleted."
 }
 
+variable "bq_dataset" {
+  type        = string
+  description = "BigQuery dataset ID containing customer/account/transaction tables"
+}
+
 provider "google" {
   project               = var.project_id
   region                = "us-central1"
@@ -53,7 +58,7 @@ resource "google_project_service" "apis" {
     "discoveryengine.googleapis.com",
     "aiplatform.googleapis.com",
     "run.googleapis.com",
-    "firestore.googleapis.com",
+    "bigquery.googleapis.com",
     "iam.googleapis.com",
     "artifactregistry.googleapis.com",
     "cloudbuild.googleapis.com",
@@ -81,15 +86,6 @@ resource "google_artifact_registry_repository" "agent_repo" {
 
 locals {
   image_url = "us-central1-docker.pkg.dev/${var.project_id}/agent-repo/agent:latest"
-}
-
-# 1. Firestore database (Native mode, default database)
-resource "google_firestore_database" "default" {
-  project     = var.project_id
-  name        = "(default)"
-  location_id = "nam5"
-  type        = "FIRESTORE_NATIVE"
-  depends_on  = [time_sleep.api_propagation]
 }
 
 # 3. Create the Data Store
@@ -136,10 +132,11 @@ data "google_project" "project" {
 }
 
 locals {
-  iam_roles           = [
+  iam_roles  = [
     "roles/discoveryengine.viewer",
     "roles/aiplatform.user",
-    "roles/datastore.user",
+    "roles/bigquery.dataViewer",
+    "roles/bigquery.jobUser",
   ]
   compute_sa = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
 }
@@ -160,12 +157,19 @@ resource "google_project_iam_member" "cloudrun_artifact_reader" {
   depends_on = [google_project_service.apis]
 }
 
-# Allow Cloud Run's default service account to read/write Firestore
-resource "google_project_iam_member" "cloudrun_firestore" {
+# Allow Cloud Run's default service account to query BigQuery
+resource "google_project_iam_member" "cloudrun_bq_viewer" {
   project    = var.project_id
-  role       = "roles/datastore.user"
+  role       = "roles/bigquery.dataViewer"
   member     = local.compute_sa
-  depends_on = [google_firestore_database.default]
+  depends_on = [google_project_service.apis]
+}
+
+resource "google_project_iam_member" "cloudrun_bq_job_user" {
+  project    = var.project_id
+  role       = "roles/bigquery.jobUser"
+  member     = local.compute_sa
+  depends_on = [google_project_service.apis]
 }
 
 # 7. Cloud Run service (only when CONTAINER_IMAGE is set)
@@ -204,8 +208,8 @@ resource "google_cloud_run_v2_service" "agent" {
         value = google_discovery_engine_search_engine.website_search_app.engine_id
       }
       env {
-        name  = "USE_DATASTORE"
-        value = "true"
+        name  = "BQ_DATASET"
+        value = var.bq_dataset
       }
       env {
         name  = "TRACE_TO_CLOUD"

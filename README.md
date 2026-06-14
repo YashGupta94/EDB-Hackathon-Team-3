@@ -1,6 +1,6 @@
 # Hackathon Starter
 
-A starter template for building AI agents with [Google ADK](https://google.github.io/adk-docs/), Vertex AI Search, and Firestore. It includes synthetic data generation, a vector search tool, and a customer database tool — ready for you to wire into your own agent.
+A starter template for building AI agents with [Google ADK](https://google.github.io/adk-docs/), Vertex AI Search, and BigQuery. It includes a vector search tool and a customer database tool — ready for you to wire into your own agent.
 
 ## Architecture
 
@@ -19,7 +19,7 @@ flowchart TD
 
     subgraph DataStores["Data Stores"]
         SQLite[("SQLite<br/>bank_data.db<br/>(local dev)")]
-        Firestore[("Firestore<br/>(USE_DATASTORE=true)")]
+        BQ[("BigQuery<br/>(BQ_DATASET)")]
     end
 
     subgraph VertexSearch["Vertex AI Search (Discovery Engine — global)"]
@@ -32,18 +32,10 @@ flowchart TD
         Repo["agent-repo (DOCKER)<br/>agent:latest"]
     end
 
-    subgraph DataGen["DataGen Pipeline (local)"]
-        Runner["run_datagen.py<br/>--firestore · --sqlite · auto"]
-        Gen["dataFakeGen.py<br/>100 customers · 300 accounts<br/>6-month transactions"]
-        Prep["prepare_for_nosql.py<br/>CSV → JSON documents"]
-        LocalDB["localdb_setup.py → SQLite"]
-        Upload["upload_to_datestore.py → Firestore"]
-    end
-
     subgraph IAM["IAM Bindings (Terraform-managed)"]
         R1["roles/discoveryengine.viewer"]
         R2["roles/aiplatform.user"]
-        R3["roles/datastore.user"]
+        R3["roles/bigquery.dataViewer + jobUser"]
         R4["roles/artifactregistry.reader<br/>→ Compute SA"]
         R5["roles/run.invoker<br/>→ allUsers (public)"]
     end
@@ -57,41 +49,36 @@ flowchart TD
     ADK <--> Gemini
     ADK --> T1 & T2 & T3
     T1 & T2 --> SQLite
-    T1 & T2 --> Firestore
+    T1 & T2 --> BQ
     T3 --> App
     App --> DS
     Crawler --> DS
     Repo -- "pulls image" --> CloudRun
     FastAPI -- "traces" --> Trace
-    Runner --> Gen
-    Gen --> Prep
-    Prep --> LocalDB & Upload
-    LocalDB --> SQLite
-    Upload --> Firestore
 ```
 
 ## What's Included
 
 ```
 EDB-Hackathon-Starter/
-├── DataGen/                        # Synthetic data pipeline (CSV → Firestore / SQLite)
-│   ├── run_datagen.py              # Single entry point — runs the full pipeline
-│   ├── dataFakeGen.py              # Generates 100 fake customers + transactions
-│   ├── prepare_for_nosql.py        # Converts CSVs to per-customer JSON documents
-│   ├── localdb_setup.py            # Loads CSVs into local SQLite
-│   └── upload_to_datestore.py      # Uploads JSON documents to Firestore
 └── ADKAgents/
     ├── bank_agent/
     │   ├── agent.py                # Your base agent — start here
     │   ├── prompt.py               # Agent instructions
     │   └── tools/
-    │       ├── customersearch.py   # Customer lookup (Firestore or SQLite)
-    │       └── productsearch.py    # Vertex AI vector search
+    │       ├── customersearch.py   # Customer lookup (BigQuery or SQLite)
+    │       ├── productsearch.py    # Vertex AI vector search
+    │       └── bigquery_tool.py    # General-purpose BigQuery query tool
+    ├── bq_seed/                    # Seed data for the test BigQuery dataset
+    │   ├── customers.json
+    │   ├── accounts.json
+    │   └── transactions.json
     ├── deploy/
     │   ├── main.tf                 # Terraform — provisions all GCP infrastructure
     │   ├── tf_deploy.py            # One-shot full deploy (infra + image + Cloud Run)
     │   ├── tf_run.py               # Terraform wrapper (passes .env as TF vars)
-    │   └── obliterate.py           # Destroy all resources and reset state
+    │   ├── bq_deploy.py            # Creates BigQuery dataset + tables and loads seed data
+    │   └── obliterate.py           # Destroy all Terraform-managed resources and reset state
     └── setup_env.py                # Interactive .env setup
 ```
 
@@ -201,9 +188,42 @@ You'll be prompted for:
 | `GOOGLE_CLOUD_LOCATION` | GCP location (default: `global`) |
 | `WEBSITE_DOMAIN` | Domain for Terraform to crawl (e.g. `www.example.com`) |
 | `VERTEX_DATA_STORE_ID` | Leave blank for now — populated after Terraform deploy |
-| `USE_DATASTORE` | `true` for Firestore, anything else uses local SQLite |
+| `BQ_DATASET` | BigQuery dataset ID (leave blank to use local SQLite) |
 
-### 4. Deploy infrastructure
+### 4. Set up BigQuery data
+
+The agent's customer search tools use BigQuery when `BQ_DATASET` is set in your `.env`. You have two options:
+
+#### Option A — Deploy the included test dataset
+
+The repo ships seed data (5 customers, 9 accounts, 19 transactions) in `bq_seed/`. One command creates the dataset, tables, and loads the data:
+
+```bash
+cd ADKAgents
+uv run bq-deploy
+```
+
+This reads `GOOGLE_CLOUD_PROJECT` and `BQ_DATASET` from `bank_agent/.env`. If the dataset or tables already exist they are left in place; the seed load always truncates and reloads. Run it again at any time to reset the data to its original state.
+
+#### Option B — Point to an existing BigQuery dataset
+
+If you already have customer, account, and transaction data in BigQuery, set `BQ_DATASET` in `bank_agent/.env` to your dataset ID and leave it at that — no deploy step needed:
+
+```dotenv
+BQ_DATASET=your-existing-dataset-id
+```
+
+The agent expects three tables in that dataset with these column names:
+
+| Table | Key columns |
+|---|---|
+| `customers` | `customer_id`, `name`, `dob`, `postcode`, `address`, `age`, `gender`, `phone` |
+| `accounts` | `account_id`, `customer_id`, `product_type`, `balance` |
+| `transactions` | `account_id`, `description`, `amount`, `type`, `date` |
+
+If `BQ_DATASET` is left blank, both customer search tools fall back to a local SQLite file (`bank_data.db`) for development without any GCP dependency.
+
+### 5. Deploy infrastructure
 
 ```bash
 cd ADKAgents
@@ -216,7 +236,6 @@ Terraform provisions the following resources:
 
 | Resource | Details |
 |---|---|
-| **Firestore database** | Native mode, `(default)` database, `nam5` region |
 | **Artifact Registry** | Docker repo for the agent container image |
 | **Vertex AI Search** | Discovery Engine data store + enterprise search app |
 | **Cloud Run** | Containerised agent service (2 GB RAM, us-central1) |
@@ -241,35 +260,12 @@ cd ADKAgents
 uv run obliterate
 ```
 
-This will destroy **all** Terraform-managed GCP resources (Cloud Run service, Artifact Registry, Discovery Engine data store, Firestore database, IAM bindings), delete local Terraform state, and reset your `.env`. You'll be asked to type the project ID to confirm. The GCP project itself is kept — only the resources inside it are removed. After obliterating, run `uv run tf-deploy` to redeploy cleanly.
-
-### 5. Generate synthetic data
-
-```bash
-cd ../DataGen
-uv sync
-
-# Run the full pipeline in one command
-uv run python run_datagen.py            # respects USE_DATASTORE in .env
-uv run python run_datagen.py --firestore # force Firestore upload
-uv run python run_datagen.py --sqlite    # force local SQLite
-```
-
-This generates 100 synthetic customers, ~300 accounts, and 6 months of transactions, then loads them into Firestore or SQLite depending on the flag (or `USE_DATASTORE` in your `.env`).
-
-You can also run each step individually:
-
-```bash
-uv run python dataFakeGen.py           # Generate customers.csv, accounts.csv, transactions.csv
-uv run python prepare_for_nosql.py     # Merge into per-customer JSON documents
-uv run python localdb_setup.py         # Load into local SQLite (ADKAgents/bank_data.db)
-uv run python upload_to_datestore.py   # Upload JSON documents to Firestore
-```
+This will destroy **all** Terraform-managed GCP resources (Cloud Run service, Artifact Registry, Discovery Engine data store, IAM bindings), delete local Terraform state, and reset your `.env`. You'll be asked to type the project ID to confirm. The GCP project itself is kept — only the resources inside it are removed. After obliterating, run `uv run tf-deploy` to redeploy cleanly.
 
 ### 6. Run the agent locally
 
 ```bash
-cd ../ADKAgents
+cd ADKAgents
 adk web
 
 # or, if you don't have `adk` installed globally
@@ -291,37 +287,36 @@ MEMBER_EMAIL=user:you@example.com
 
 `tf-deploy` reads this value automatically and passes it to Terraform as `TF_VAR_member_email`.
 
-Terraform grants `roles/discoveryengine.viewer`, `roles/aiplatform.user`, and `roles/datastore.user` to that identity.
+Terraform grants `roles/discoveryengine.viewer`, `roles/aiplatform.user`, `roles/bigquery.dataViewer`, and `roles/bigquery.jobUser` to that identity.
 
-The Cloud Run compute service account is separately granted `roles/artifactregistry.reader` (to pull images) and `roles/datastore.user` (to read/write Firestore at runtime).
+The Cloud Run compute service account is separately granted `roles/artifactregistry.reader` (to pull images) and `roles/bigquery.dataViewer` + `roles/bigquery.jobUser` (to query BigQuery at runtime).
 
 ---
 
 ## Building Your Agent
 
-Open `ADKAgents/bank_agent/agent.py`. You'll find a minimal base agent:
+Open `ADKAgents/bank_agent/agent.py`. The agent is pre-configured with all three tools:
 
 ```python
 from google.adk.agents import Agent
 from .prompt import AGENT_INSTRUCTION
+from .tools.customersearch import customer_database_search, customer_id_search
+from .tools.productsearch import vertex_vector_search
 
 root_agent = Agent(
     name="bank_agent",
     model="gemini-2.5-flash",
     description="A helpful banking assistant.",
     instruction=AGENT_INSTRUCTION,
+    tools=[customer_id_search, customer_database_search, vertex_vector_search],
 )
 ```
 
-The tools in `tools/` are ready to import and attach:
-
-| Tool | Import | Description |
-|---|---|---|
-| `customer_id_search` | `from .tools.customersearch import customer_id_search` | Look up a customer by ID |
-| `customer_database_search` | `from .tools.customersearch import customer_database_search` | Full profile + transaction history |
-| `vertex_vector_search` | `from .tools.productsearch import vertex_vector_search` | Semantic search over your website |
-
-Add them to an agent's `tools` list to start using them.
+| Tool | Description |
+|---|---|
+| `customer_id_search` | Look up a customer by ID — uses BigQuery when `BQ_DATASET` is set, otherwise SQLite |
+| `customer_database_search` | Full profile + transaction history for the verified customer |
+| `vertex_vector_search` | Semantic search over your website via Vertex AI Search |
 
 To build multi-agent pipelines, pass other `Agent` instances via `sub_agents=[...]`. Each sub-agent is invoked by name, and any inputs are forwarded as named keyword arguments matching its tool signatures.
 
@@ -339,12 +334,12 @@ gcloud services enable cloudresourcemanager.googleapis.com --project YOUR_PROJEC
 cd ADKAgents
 uv run tf init
 
-# 3. Phase 1 — provision infra (Firestore, Artifact Registry, Discovery Engine data store, IAM bindings)
+# 3. Phase 1 — provision infra (Artifact Registry, Discovery Engine data store, IAM bindings)
 #    Pass an empty container_image so Cloud Run is skipped until the image exists
 uv run tf apply -auto-approve -var=container_image=
 
-# 4. Build and push the container image via Cloud Build 
-#    You can run step 4 & 5 every time you want to redeploy your agent with recent changes
+# 4. Build and push the container image via Cloud Build
+#    You can run steps 4 & 5 every time you want to redeploy your agent with recent changes
 IMAGE_URL=$(uv run tf output -raw image_url)
 gcloud builds submit --tag "$IMAGE_URL" --project YOUR_PROJECT_ID .
 
