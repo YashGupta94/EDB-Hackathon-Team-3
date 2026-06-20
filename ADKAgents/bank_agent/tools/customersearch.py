@@ -13,7 +13,7 @@ PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "")
 
 
 def _bq_client() -> bigquery.Client:
-    return bigquery.Client(project=PROJECT_ID)
+    return bigquery.Client(project=PROJECT_ID if PROJECT_ID else None)
 
 
 def customer_id_search(customer_id: str, tool_context: ToolContext) -> dict:

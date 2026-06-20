@@ -10,43 +10,34 @@ BQ_DATASET = os.getenv("BQ_DATASET", "")
 
 
 def run_bigquery_query(sql: str) -> str:
-    """Executes a read-only SQL query against the bank BigQuery dataset and returns the results.
+    """Executes a read-only SQL query against BigQuery and returns the results.
 
-    Use this tool for analytics or reporting questions that go beyond simple customer
-    lookups — for example: aggregating transaction volumes, comparing balances across
-    accounts, or spotting spending patterns. The dataset contains three tables:
-      - customers (customer_id, name, dob, postcode, address, age, gender, phone)
-      - accounts  (account_id, customer_id, product_type, balance)
-      - transactions (account_id, description, amount, type, date)
-
-    Always reference tables as `{dataset}.table_name` in your SQL — use the
-    BQ_DATASET variable already substituted into your query at call time, or ask
-    the agent to substitute it. Queries are parameterised at the caller's
-    discretion; this function runs whatever SQL string is passed in.
+    Use this tool for analytics or reporting questions. You can query any 
+    project and dataset your service account has access to by using fully 
+    qualified table names (e.g., `project.dataset.table`) in the SQL.
+    
+    If you use `{dataset}`, it will be replaced with the BQ_DATASET env variable if set.
 
     Args:
-        sql: A valid GoogleSQL SELECT statement targeting the bank dataset.
+        sql: A valid GoogleSQL SELECT statement.
 
     Returns:
         A plain-text table of results, or an error message if the query fails.
     """
-    if not BQ_DATASET:
-        return "ERROR: BQ_DATASET environment variable is not set. Cannot run BigQuery queries."
-
-    if not PROJECT_ID:
-        return "ERROR: GOOGLE_CLOUD_PROJECT environment variable is not set."
-
     # Reject anything that looks like a write operation — this tool is read-only.
     normalised = sql.strip().upper()
-    for disallowed in ("INSERT", "UPDATE", "DELETE", "DROP", "TRUNCATE", "MERGE", "CREATE"):
+    for disallowed in ("INSERT", "UPDATE", "DELETE", "DROP", "TRUNCATE", "MERGE", "CREATE", "ALTER", "GRANT", "REVOKE"):
         if normalised.startswith(disallowed):
             return f"ERROR: Write operations are not permitted. Only SELECT queries are allowed."
 
     try:
-        client = bigquery.Client(project=PROJECT_ID)
+        # If PROJECT_ID is empty, it falls back to the default credential project
+        client = bigquery.Client(project=PROJECT_ID if PROJECT_ID else None)
 
-        # Substitute the dataset placeholder so callers can write portable SQL
-        resolved_sql = sql.replace("{dataset}", BQ_DATASET)
+        # Substitute the dataset placeholder if BQ_DATASET is provided
+        resolved_sql = sql
+        if BQ_DATASET:
+            resolved_sql = sql.replace("{dataset}", BQ_DATASET)
 
         print(f"Running BigQuery query:\n{resolved_sql}")
         result_df = client.query(resolved_sql).to_dataframe()
