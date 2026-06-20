@@ -10,6 +10,7 @@ from .prompt import AGENT_INSTRUCTION
 from .tools.bigquery_tool import run_bigquery_query
 from .tools.customersearch import customer_database_search, customer_id_search
 from .tools.productsearch import vertex_vector_search
+from .tools.ecommerce_tools import lookup_user_orders, check_product_stock, sales_reporting_query
 
 load_dotenv()
 
@@ -31,5 +32,5 @@ root_agent = Agent(
     model=VertexGemini(model="gemini-2.5-flash"),
     description="A helpful banking assistant.",
     instruction=AGENT_INSTRUCTION,
-    tools=[customer_id_search, customer_database_search, vertex_vector_search, run_bigquery_query],
+    tools=[customer_id_search, customer_database_search, vertex_vector_search, run_bigquery_query, lookup_user_orders, check_product_stock, sales_reporting_query],
 )
