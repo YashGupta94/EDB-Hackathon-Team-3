@@ -44,10 +44,10 @@ questions = [
         "color": "cyan",
     },
     {
-        "key": "USE_DATASTORE",
-        "prompt": "Use datastore?",
-        "default": "false",
-        "hint": "set to 'true' to use GCP Datastore database, set to anything else to use local SQLite database",
+        "key": "BQ_DATASET",
+        "prompt": "BigQuery dataset ID",
+        "default": "",
+        "hint": "BigQuery dataset containing customers/accounts/transactions tables (leave blank to use local SQLite)",
         "color": "cyan",
     },
     {
