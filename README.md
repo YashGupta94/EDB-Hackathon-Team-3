@@ -89,7 +89,9 @@ EDB-Hackathon-Starter/
     │   ├── main.tf                 # Terraform — provisions all GCP infrastructure
     │   ├── tf_deploy.py            # One-shot full deploy (infra + image + Cloud Run)
     │   ├── tf_run.py               # Terraform wrapper (passes .env as TF vars)
-    │   └── obliterate.py           # Destroy all resources and reset state
+    │   ├── bq_deploy.py            # Create and seed BigQuery datasets from datasets/*.yaml
+    │   ├── bq_destroy.py           # Delete all BigQuery datasets defined in datasets/*.yaml
+    │   └── obliterate.py           # Destroy all Terraform-managed resources and reset state
     └── setup_env.py                # Interactive .env setup
 ```
 
@@ -217,6 +219,14 @@ uv run bq-deploy
 
 `bq-deploy` reads every `*.yaml` file in `datasets/`, creates the dataset and tables if they don't exist, and truncates+reloads the seed data. Run it again at any time to reset to a clean state.
 
+To remove all deployed datasets:
+
+```bash
+uv run bq-destroy
+```
+
+This deletes every dataset defined in `datasets/*.yaml` (including all tables and data). Useful for a clean slate before re-running `bq-deploy`.
+
 **Bank dataset** (`BQ_DATASET`) — 5 customers, 9 accounts, 19 transactions — queried by `customersearch.py`  
 **Ecommerce dataset** (`ECOMMERCE_DATASET`) — 3 users, 4 products, 4 orders — queried by `ecommerce_tools.py`
 
@@ -298,6 +308,14 @@ uv run obliterate
 ```
 
 This will destroy **all** Terraform-managed GCP resources (Cloud Run service, Artifact Registry, Discovery Engine data store, IAM bindings), delete local Terraform state, and reset your `.env`. You'll be asked to type the project ID to confirm. The GCP project itself is kept — only the resources inside it are removed. After obliterating, run `uv run tf-deploy` to redeploy cleanly.
+
+For scripting or CI environments, pass `--force` to skip the confirmation prompt:
+
+```bash
+uv run obliterate --force
+```
+
+> **Note:** `obliterate` only removes Terraform-managed resources. BigQuery datasets are managed separately — run `uv run bq-destroy` to remove those.
 
 ### 6. Run the agent locally
 
@@ -444,7 +462,6 @@ All settings are controlled via environment variables in `bank_agent/.env`:
 | `TRACE_TO_CLOUD` | `false` | Set to `true` to export traces to Cloud Trace and metrics to Cloud Monitoring (requires GCP credentials). |
 | `LOG_LLM_CONTENT` | `true` | Set to `false` to suppress prompt/response content from logs (token/cost metrics are still recorded). Recommended when handling PII. |
 | `COST_GRANULARITY` | `session` | How cost is aggregated: `session`, `turn`, or `cumulative`. |
-| `GEMINI_MODEL` | `gemini-2.5-flash` | Model name used for cost calculation. |
 
 ### Cloud Trace integration
 
