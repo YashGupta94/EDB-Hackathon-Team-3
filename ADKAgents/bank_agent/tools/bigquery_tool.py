@@ -7,6 +7,7 @@ load_dotenv()
 
 PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "")
 BQ_DATASET = os.getenv("BQ_DATASET", "")
+ECOMMERCE_DATASET = os.getenv("ECOMMERCE_DATASET", "ecommerce_data")
 
 
 def run_bigquery_query(sql: str) -> str:
@@ -16,7 +17,9 @@ def run_bigquery_query(sql: str) -> str:
     project and dataset your service account has access to by using fully 
     qualified table names (e.g., `project.dataset.table`) in the SQL.
     
-    If you use `{dataset}`, it will be replaced with the BQ_DATASET env variable if set.
+    Placeholders in the SQL are substituted automatically:
+      - `{dataset}` → BQ_DATASET (bank dataset)
+      - `{ecommerce_dataset}` → ECOMMERCE_DATASET
 
     Args:
         sql: A valid GoogleSQL SELECT statement.
@@ -34,10 +37,7 @@ def run_bigquery_query(sql: str) -> str:
         # If PROJECT_ID is empty, it falls back to the default credential project
         client = bigquery.Client(project=PROJECT_ID if PROJECT_ID else None)
 
-        # Substitute the dataset placeholder if BQ_DATASET is provided
-        resolved_sql = sql
-        if BQ_DATASET:
-            resolved_sql = sql.replace("{dataset}", BQ_DATASET)
+        resolved_sql = sql.replace("{dataset}", BQ_DATASET).replace("{ecommerce_dataset}", ECOMMERCE_DATASET)
 
         print(f"Running BigQuery query:\n{resolved_sql}")
         result_df = client.query(resolved_sql).to_dataframe()

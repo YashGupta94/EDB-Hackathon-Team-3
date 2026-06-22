@@ -69,7 +69,10 @@ EDB-Hackathon-Starter/
     │       ├── customersearch.py   # Customer lookup (BigQuery or SQLite)
     │       ├── productsearch.py    # Vertex AI vector search
     │       └── bigquery_tool.py    # General-purpose BigQuery query tool
-    ├── bq_seed/                    # Seed data for the test BigQuery dataset
+    ├── datasets/                   # BigQuery dataset definitions — add your own here
+    │   ├── bank.yaml               # Bank dataset (customers, accounts, transactions)
+    │   └── ecommerce.yaml          # Ecommerce dataset (users, products, orders)
+    ├── bq_seed/                    # Seed data files referenced by bank.yaml
     │   ├── customers.json
     │   ├── accounts.json
     │   └── transactions.json
@@ -77,7 +80,7 @@ EDB-Hackathon-Starter/
     │   ├── main.tf                 # Terraform — provisions all GCP infrastructure
     │   ├── tf_deploy.py            # One-shot full deploy (infra + image + Cloud Run)
     │   ├── tf_run.py               # Terraform wrapper (passes .env as TF vars)
-    │   ├── bq_deploy.py            # Creates BigQuery dataset + tables and loads seed data
+    │   ├── bq_deploy.py            # Reads datasets/*.yaml and deploys all datasets
     │   └── obliterate.py           # Destroy all Terraform-managed resources and reset state
     └── setup_env.py                # Interactive .env setup
 ```
@@ -188,40 +191,66 @@ You'll be prompted for:
 | `GOOGLE_CLOUD_LOCATION` | GCP location (default: `global`) |
 | `WEBSITE_DOMAIN` | Domain for Terraform to crawl (e.g. `www.example.com`) |
 | `VERTEX_DATA_STORE_ID` | Leave blank for now — populated after Terraform deploy |
-| `BQ_DATASET` | BigQuery dataset ID (leave blank to use local SQLite) |
+| `BQ_DATASET` | Bank dataset name — used by customer search tools (leave blank to use local SQLite) |
+| `ECOMMERCE_DATASET` | Ecommerce dataset name — used by order/product/sales tools |
 
 ### 4. Set up BigQuery data
 
 The agent's customer search tools use BigQuery when `BQ_DATASET` is set in your `.env`. You have two options:
 
-#### Option A — Deploy the included test dataset
+#### Option A — Deploy the included datasets
 
-The repo ships seed data (5 customers, 9 accounts, 19 transactions) in `bq_seed/`. One command creates the dataset, tables, and loads the data:
+The repo ships two datasets defined in `datasets/*.yaml`. One command creates all of them:
 
 ```bash
 cd ADKAgents
 uv run bq-deploy
 ```
 
-This reads `GOOGLE_CLOUD_PROJECT` and `BQ_DATASET` from `bank_agent/.env`. If the dataset or tables already exist they are left in place; the seed load always truncates and reloads. Run it again at any time to reset the data to its original state.
+`bq-deploy` reads every `*.yaml` file in `datasets/`, creates the dataset and tables if they don't exist, and truncates+reloads the seed data. Run it again at any time to reset to a clean state.
 
-#### Option B — Point to an existing BigQuery dataset
+**Bank dataset** (`BQ_DATASET`) — 5 customers, 9 accounts, 19 transactions — queried by `customersearch.py`  
+**Ecommerce dataset** (`ECOMMERCE_DATASET`) — 3 users, 4 products, 4 orders — queried by `ecommerce_tools.py`
 
-If you already have customer, account, and transaction data in BigQuery, set `BQ_DATASET` in `bank_agent/.env` to your dataset ID and leave it at that — no deploy step needed:
+Each dataset name is set in `.env` and referenced in its YAML via `${BQ_DATASET}` / `${ECOMMERCE_DATASET}`. Change the env var and both the deploy and the tools update together.
+
+#### Option B — Add your own dataset
+
+To deploy a dataset specific to your project, create a YAML file in `datasets/`:
+
+```yaml
+# datasets/my_dataset.yaml
+dataset: my_dataset_name   # or ${MY_ENV_VAR} to read from .env
+
+tables:
+  - name: my_table
+    schema:
+      - {name: id,    type: STRING, mode: REQUIRED}
+      - {name: label, type: STRING}
+      - {name: score, type: FLOAT}
+    seed_data:                      # inline rows
+      - {id: "1", label: "alpha", score: 0.9}
+
+  - name: another_table
+    schema:
+      - {name: id,   type: STRING}
+      - {name: value, type: INTEGER}
+    seed_file: bq_seed/another_table.json   # or reference a JSON file
+```
+
+Supported field types: `STRING`, `INTEGER`, `FLOAT`, `BOOLEAN`, `DATE`, `TIMESTAMP`. `mode` defaults to `NULLABLE` if omitted. Use `seed_data` for small inline rows or `seed_file` for a newline-delimited JSON file — not both on the same table.
+
+Run `uv run bq-deploy` and your dataset appears alongside the others.
+
+#### Option C — Point to an existing BigQuery dataset
+
+If you already have data in BigQuery, set `BQ_DATASET` in `bank_agent/.env` to your dataset ID — no deploy step needed:
 
 ```dotenv
 BQ_DATASET=your-existing-dataset-id
 ```
 
-The agent expects three tables in that dataset with these column names:
-
-| Table | Key columns |
-|---|---|
-| `customers` | `customer_id`, `name`, `dob`, `postcode`, `address`, `age`, `gender`, `phone` |
-| `accounts` | `account_id`, `customer_id`, `product_type`, `balance` |
-| `transactions` | `account_id`, `description`, `amount`, `type`, `date` |
-
-If `BQ_DATASET` is left blank, both customer search tools fall back to a local SQLite file (`bank_data.db`) for development without any GCP dependency.
+If `BQ_DATASET` is left blank, the customer search tools fall back to a local SQLite file (`bank_data.db`) for development without any GCP dependency.
 
 ### 5. Deploy infrastructure
 
@@ -312,11 +341,15 @@ root_agent = Agent(
 )
 ```
 
-| Tool | Description |
-|---|---|
-| `customer_id_search` | Look up a customer by ID — uses BigQuery when `BQ_DATASET` is set, otherwise SQLite |
-| `customer_database_search` | Full profile + transaction history for the verified customer |
-| `vertex_vector_search` | Semantic search over your website via Vertex AI Search |
+| Tool | Dataset | Description |
+|---|---|---|
+| `customer_id_search` | `BQ_DATASET` | Look up a customer by ID — falls back to SQLite if `BQ_DATASET` is unset |
+| `customer_database_search` | `BQ_DATASET` | Full profile + transaction history for the verified customer |
+| `run_bigquery_query` | any | General-purpose SELECT tool; use `{dataset}` or `{ecommerce_dataset}` as placeholders |
+| `lookup_user_orders` | `ECOMMERCE_DATASET` | Order history for a user by email |
+| `check_product_stock` | `ECOMMERCE_DATASET` | Inventory and pricing for a product |
+| `sales_reporting_query` | `ECOMMERCE_DATASET` | Arbitrary analytics queries against the ecommerce dataset |
+| `vertex_vector_search` | — | Semantic search over your website via Vertex AI Search |
 
 To build multi-agent pipelines, pass other `Agent` instances via `sub_agents=[...]`. Each sub-agent is invoked by name, and any inputs are forwarded as named keyword arguments matching its tool signatures.
 

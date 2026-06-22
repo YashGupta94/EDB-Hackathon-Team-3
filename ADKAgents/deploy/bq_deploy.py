@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Create the BigQuery dataset + tables and load seed data from bq_seed/."""
+"""Deploy all BigQuery datasets defined in datasets/*.yaml."""
 
+import datetime
+import re
 import sys
 from pathlib import Path
 
+import yaml
 from google.cloud import bigquery
 from google.cloud.exceptions import Conflict
 from rich.console import Console
@@ -14,51 +17,69 @@ from deploy.tf_run import ENV_PATH, load_env
 
 console = Console()
 
-SEED_DIR = Path(__file__).parent.parent / "bq_seed"
-
-SCHEMAS = {
-    "customers": [
-        bigquery.SchemaField("customer_id", "STRING"),
-        bigquery.SchemaField("name",        "STRING"),
-        bigquery.SchemaField("dob",         "STRING"),
-        bigquery.SchemaField("postcode",    "STRING"),
-        bigquery.SchemaField("address",     "STRING"),
-        bigquery.SchemaField("age",         "INTEGER"),
-        bigquery.SchemaField("gender",      "STRING"),
-        bigquery.SchemaField("phone",       "STRING"),
-    ],
-    "accounts": [
-        bigquery.SchemaField("account_id",   "STRING"),
-        bigquery.SchemaField("customer_id",  "STRING"),
-        bigquery.SchemaField("product_type", "STRING"),
-        bigquery.SchemaField("balance",      "FLOAT"),
-    ],
-    "transactions": [
-        bigquery.SchemaField("account_id",  "STRING"),
-        bigquery.SchemaField("description", "STRING"),
-        bigquery.SchemaField("amount",      "FLOAT"),
-        bigquery.SchemaField("type",        "STRING"),
-        bigquery.SchemaField("date",        "STRING"),
-    ],
-}
+REPO_ROOT = Path(__file__).parent.parent
+DATASETS_DIR = REPO_ROOT / "datasets"
 
 
-def create_dataset(client: bigquery.Client, dataset_id: str, project: str) -> bigquery.Dataset:
+def interpolate(value: str, env: dict[str, str]) -> str:
+    """Resolve ${VAR} tokens in value using env dict."""
+    def replacer(match: re.Match) -> str:
+        var = match.group(1)
+        if var not in env:
+            raise ValueError(f"Env var '{var}' referenced in dataset YAML but not set in .env")
+        return env[var]
+    return re.sub(r"\$\{([^}]+)\}", replacer, value)
+
+
+def load_dataset_configs(env: dict[str, str]) -> list[dict]:
+    configs = []
+    for yaml_file in sorted(DATASETS_DIR.glob("*.yaml")):
+        with yaml_file.open() as f:
+            cfg = yaml.safe_load(f)
+        cfg["dataset"] = interpolate(cfg["dataset"], env)
+        cfg.setdefault("location", "US")
+        for table in cfg.get("tables", []):
+            if "seed_file" in table and "seed_data" in table:
+                raise ValueError(
+                    f"Table '{table['name']}' in {yaml_file.name} has both "
+                    "seed_file and seed_data — use one only"
+                )
+        configs.append(cfg)
+    return configs
+
+
+def schema_from_config(fields: list[dict]) -> list[bigquery.SchemaField]:
+    return [
+        bigquery.SchemaField(f["name"], f["type"], mode=f.get("mode", "NULLABLE"))
+        for f in fields
+    ]
+
+
+def normalize_seed_rows(rows: list[dict]) -> list[dict]:
+    """Convert date/datetime objects PyYAML auto-parses back to ISO strings."""
+    result = []
+    for row in rows:
+        result.append({
+            k: v.isoformat() if isinstance(v, (datetime.date, datetime.datetime)) else v
+            for k, v in row.items()
+        })
+    return result
+
+
+def create_dataset(client: bigquery.Client, dataset_id: str, project: str, location: str = "US") -> None:
     full_id = f"{project}.{dataset_id}"
     dataset = bigquery.Dataset(full_id)
-    dataset.location = "US"
+    dataset.location = location
     try:
-        ds = client.create_dataset(dataset)
+        client.create_dataset(dataset)
         console.print(f"  Created dataset [cyan]{full_id}[/cyan]")
-        return ds
     except Conflict:
         console.print(f"  Dataset [cyan]{full_id}[/cyan] already exists — skipping create")
-        return client.get_dataset(full_id)
 
 
-def create_table(client: bigquery.Client, dataset_id: str, project: str, table_name: str) -> None:
+def create_table(client: bigquery.Client, project: str, dataset_id: str, table_name: str, schema_fields: list[dict]) -> None:
     table_ref = f"{project}.{dataset_id}.{table_name}"
-    table = bigquery.Table(table_ref, schema=SCHEMAS[table_name])
+    table = bigquery.Table(table_ref, schema=schema_from_config(schema_fields))
     try:
         client.create_table(table)
         console.print(f"  Created table   [cyan]{table_name}[/cyan]")
@@ -66,22 +87,29 @@ def create_table(client: bigquery.Client, dataset_id: str, project: str, table_n
         console.print(f"  Table [cyan]{table_name}[/cyan] already exists — skipping create")
 
 
-def load_table(client: bigquery.Client, dataset_id: str, project: str, table_name: str) -> int:
-    seed_file = SEED_DIR / f"{table_name}.json"
-    if not seed_file.exists():
-        console.print(f"  [yellow]No seed file found for {table_name} — skipping load[/yellow]")
-        return 0
-
+def load_from_file(client: bigquery.Client, project: str, dataset_id: str, table_name: str, schema_fields: list[dict], seed_path: Path) -> int:
     table_ref = f"{project}.{dataset_id}.{table_name}"
     job_config = bigquery.LoadJobConfig(
-        schema=SCHEMAS[table_name],
+        schema=schema_from_config(schema_fields),
         source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
         write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
     )
-    with seed_file.open("rb") as f:
+    with seed_path.open("rb") as f:
         job = client.load_table_from_file(f, table_ref, job_config=job_config)
+    job.result()
+    table = client.get_table(table_ref)
+    console.print(f"  Loaded  [cyan]{table_name}[/cyan] — [bold]{table.num_rows}[/bold] rows")
+    return table.num_rows
 
-    job.result()  # wait for completion
+
+def load_from_inline(client: bigquery.Client, project: str, dataset_id: str, table_name: str, schema_fields: list[dict], rows: list[dict]) -> int:
+    table_ref = f"{project}.{dataset_id}.{table_name}"
+    job_config = bigquery.LoadJobConfig(
+        schema=schema_from_config(schema_fields),
+        write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
+    )
+    job = client.load_table_from_json(normalize_seed_rows(rows), table_ref, job_config=job_config)
+    job.result()
     table = client.get_table(table_ref)
     console.print(f"  Loaded  [cyan]{table_name}[/cyan] — [bold]{table.num_rows}[/bold] rows")
     return table.num_rows
@@ -91,9 +119,7 @@ def main() -> None:
     console.print()
     console.print(Panel.fit(
         Text.assemble(
-            ("Bank Agent", "bold bright_green"),
-            (" — ", "dim white"),
-            ("BigQuery Deploy", "bold white"),
+            ("BigQuery Deploy", "bold bright_green"),
         ),
         border_style="bright_green",
         padding=(0, 2),
@@ -105,44 +131,62 @@ def main() -> None:
 
     dot_env = load_env(ENV_PATH)
     project = dot_env.get("GOOGLE_CLOUD_PROJECT", "")
-    dataset_id = dot_env.get("BQ_DATASET", "")
-
     if not project:
         console.print("[red]Error: GOOGLE_CLOUD_PROJECT not set in .env[/red]")
         sys.exit(1)
-    if not dataset_id:
-        console.print("[red]Error: BQ_DATASET not set in .env[/red]")
+
+    if not DATASETS_DIR.exists():
+        console.print(f"[red]Error: {DATASETS_DIR} not found. No datasets to deploy.[/red]")
         sys.exit(1)
 
-    console.print(f"\n  Project : [cyan]{project}[/cyan]")
-    console.print(f"  Dataset : [cyan]{dataset_id}[/cyan]")
-    console.print()
+    try:
+        configs = load_dataset_configs(dot_env)
+    except ValueError as e:
+        console.print(f"[red]Error: {e}[/red]")
+        sys.exit(1)
+
+    if not configs:
+        console.print("[yellow]No *.yaml files found in datasets/ — nothing to deploy.[/yellow]")
+        return
+
+    console.print(f"\n  Project  : [cyan]{project}[/cyan]")
+    console.print(f"  Datasets : [cyan]{', '.join(c['dataset'] for c in configs)}[/cyan]\n")
 
     client = bigquery.Client(project=project)
+    grand_total = 0
 
-    # Step 1: dataset
-    console.print("  [bold]Step 1:[/bold] Dataset")
-    create_dataset(client, dataset_id, project)
-    console.print()
+    for i, cfg in enumerate(configs, start=1):
+        dataset_id = cfg["dataset"]
+        tables = cfg.get("tables", [])
 
-    # Step 2: tables
-    console.print("  [bold]Step 2:[/bold] Tables")
-    for table_name in SCHEMAS:
-        create_table(client, dataset_id, project, table_name)
-    console.print()
+        console.print(f"  [bold]Step {i}:[/bold] [cyan]{dataset_id}[/cyan]")
 
-    # Step 3: seed data
-    console.print("  [bold]Step 3:[/bold] Seed data")
-    total_rows = 0
-    for table_name in SCHEMAS:
-        total_rows += load_table(client, dataset_id, project, table_name)
-    console.print()
+        create_dataset(client, dataset_id, project, cfg["location"])
+
+        for table_cfg in tables:
+            create_table(client, project, dataset_id, table_cfg["name"], table_cfg["schema"])
+
+        for table_cfg in tables:
+            table_name = table_cfg["name"]
+            schema_fields = table_cfg["schema"]
+
+            if "seed_file" in table_cfg:
+                seed_path = REPO_ROOT / table_cfg["seed_file"]
+                if not seed_path.exists():
+                    console.print(f"  [yellow]seed_file {seed_path} not found — skipping {table_name}[/yellow]")
+                    continue
+                grand_total += load_from_file(client, project, dataset_id, table_name, schema_fields, seed_path)
+            elif "seed_data" in table_cfg:
+                grand_total += load_from_inline(client, project, dataset_id, table_name, schema_fields, table_cfg["seed_data"])
+            else:
+                console.print(f"  [dim]No seed data for {table_name}[/dim]")
+
+        console.print()
 
     console.print(Panel.fit(
         Text.assemble(
             ("Done! ", "bold bright_green"),
-            (f"{total_rows} rows loaded into ", "white"),
-            (f"{project}.{dataset_id}", "cyan"),
+            (f"{grand_total} rows loaded across all datasets", "white"),
         ),
         border_style="bright_green",
         padding=(0, 2),
