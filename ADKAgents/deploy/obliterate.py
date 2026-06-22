@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Destroy all Terraform-managed GCP resources and reset local state."""
 
+import argparse
 import shutil
 import sys
 from pathlib import Path
@@ -41,6 +42,9 @@ def clean_local_state() -> None:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--force", action="store_true", help="Skip interactive confirmation (for CI/scripting)")
+    args = parser.parse_args()
     console.print()
     console.print(Panel.fit(
         Text.assemble(
@@ -85,16 +89,19 @@ def main() -> None:
   [bold]The GCP project itself will NOT be deleted.[/bold]
 """)
 
-    console.print(f"  Type the project ID [cyan]{project_id}[/cyan] to confirm: ", end="")
-    try:
-        confirm = input()
-    except (KeyboardInterrupt, EOFError):
-        console.print("\n\n  [yellow]Aborted.[/yellow]\n")
-        sys.exit(0)
+    if args.force:
+        console.print(f"  [yellow]--force flag set. Skipping confirmation.[/yellow]")
+    else:
+        console.print(f"  Type the project ID [cyan]{project_id}[/cyan] to confirm: ", end="")
+        try:
+            confirm = input()
+        except (KeyboardInterrupt, EOFError):
+            console.print("\n\n  [yellow]Aborted.[/yellow]\n")
+            sys.exit(0)
 
-    if confirm.strip() != project_id:
-        console.print("\n  [yellow]Aborted — project ID did not match.[/yellow]\n")
-        sys.exit(0)
+        if confirm.strip() != project_id:
+            console.print("\n  [yellow]Aborted — project ID did not match.[/yellow]\n")
+            sys.exit(0)
 
     console.print("\n  [bold]Destroying GCP resources...[/bold]\n")
     terraform("destroy", "-auto-approve")

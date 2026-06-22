@@ -25,7 +25,8 @@ variable "member_email" {
 variable "google_api_key" {
   type        = string
   sensitive   = true
-  description = "Gemini API key passed to the Cloud Run service"
+  default     = ""
+  description = "Gemini API key passed to the Cloud Run service (optional when using Vertex AI with ADC)"
 }
 
 variable "container_image" {

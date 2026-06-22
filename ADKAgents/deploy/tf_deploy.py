@@ -163,6 +163,10 @@ def main():
     cloud_run_url = tf_output("cloud_run_url")
     vertex_data_store_id = tf_output("vertex_data_store_id")
 
+    if vertex_data_store_id and dot_env.get("VERTEX_DATA_STORE_ID") != vertex_data_store_id:
+        write_env_value("VERTEX_DATA_STORE_ID", vertex_data_store_id)
+        console.print(f"\n  Written [cyan]VERTEX_DATA_STORE_ID={vertex_data_store_id}[/cyan] to .env")
+
     console.print()
     console.print(Panel.fit(
         Text.assemble(("Deploy complete!", "bold bright_green")),
