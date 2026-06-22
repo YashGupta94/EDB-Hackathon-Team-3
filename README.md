@@ -302,7 +302,7 @@ This will destroy **all** Terraform-managed GCP resources (Cloud Run service, Ar
 ### 6. Run the agent locally
 
 ```bash
-cd ../ADKAgents
+cd ADKAgents
 uv run python main.py
 ```
 
@@ -467,7 +467,6 @@ When `TRACE_TO_CLOUD=false` (default), traces are printed to stdout via the `Con
 gcloud services enable cloudresourcemanager.googleapis.com --project YOUR_PROJECT_ID
 
 # 2. Initialise Terraform
-cd ADKAgents
 uv run tf init
 
 # 3. Phase 1 — provision infra (Artifact Registry, Discovery Engine data store, IAM bindings)

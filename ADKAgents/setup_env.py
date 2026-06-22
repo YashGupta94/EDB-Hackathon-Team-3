@@ -51,6 +51,13 @@ questions = [
         "color": "cyan",
     },
     {
+        "key": "ECOMMERCE_DATASET",
+        "prompt": "Ecommerce dataset ID",
+        "default": "",
+        "hint": "BigQuery dataset containing ecommerce tables (users/products/orders)",
+        "color": "cyan",
+    },
+    {
         "key": "MEMBER_EMAIL",
         "prompt": "IAM member for Terraform",
         "hint": "e.g. user:you@example.com or serviceAccount:sa@project.iam.gserviceaccount.com",
