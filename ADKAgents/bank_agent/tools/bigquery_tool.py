@@ -3,6 +3,8 @@ import os
 from dotenv import load_dotenv
 from google.cloud import bigquery
 
+from ..observability.tool_tracer import traced_tool
+
 load_dotenv()
 
 PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "")
@@ -10,6 +12,7 @@ BQ_DATASET = os.getenv("BQ_DATASET", "")
 ECOMMERCE_DATASET = os.getenv("ECOMMERCE_DATASET", "ecommerce_data")
 
 
+@traced_tool
 def run_bigquery_query(sql: str) -> str:
     """Executes a read-only SQL query against BigQuery and returns the results.
 

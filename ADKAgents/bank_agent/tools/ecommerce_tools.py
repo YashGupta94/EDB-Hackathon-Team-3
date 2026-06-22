@@ -3,6 +3,8 @@ import os
 from dotenv import load_dotenv
 from google.cloud import bigquery
 
+from ..observability.tool_tracer import traced_tool
+
 load_dotenv()
 
 PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "")
@@ -13,6 +15,7 @@ def _bq_client() -> bigquery.Client:
     return bigquery.Client(project=PROJECT_ID if PROJECT_ID else None)
 
 
+@traced_tool
 def lookup_user_orders(email: str) -> str:
     """Retrieves a user's order history using their email address.
 
@@ -45,6 +48,7 @@ def lookup_user_orders(email: str) -> str:
         return f"Database Error: {str(e)}"
 
 
+@traced_tool
 def check_product_stock(product_name: str) -> str:
     """Checks the inventory levels and details for a specific product.
 
@@ -74,6 +78,7 @@ def check_product_stock(product_name: str) -> str:
         return f"Database Error: {str(e)}"
 
 
+@traced_tool
 def sales_reporting_query(sql: str) -> str:
     """Executes a read-only SQL query against the ecommerce dataset.
 

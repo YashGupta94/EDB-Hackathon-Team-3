@@ -76,6 +76,8 @@ def customer_id_search(customer_id: str, tool_context: ToolContext) -> dict:
 
             result = result_df.iloc[0].to_dict()
 
+        tool_context.state["identity_verified"] = True
+        tool_context.state["verified_customer_id"] = verified_id
         result["status"] = "success"
         return result
 
