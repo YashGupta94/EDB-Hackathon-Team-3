@@ -5,10 +5,13 @@ description = "Add your description here"
 requires-python = ">=3.14"
 dependencies = [
     "google-adk>=1.29.0",
+    "google-cloud-aiplatform>=1.0.0",
+    "google-cloud-bigquery>=3.0.0",
+    "google-cloud-discoveryengine>=0.11.0",
     "rich>=13.0.0",
     "pandas>=2.0.0",
-    "google-cloud-bigquery>=3.0.0",
     "db-dtypes>=1.0.0",
+    "python-dotenv>=1.0.0",
     "fastapi",
     "uvicorn",
     "opentelemetry-sdk>=1.24.0",
@@ -23,6 +26,7 @@ setup-env = "setup_env:main"
 tf = "deploy.tf_run:main"
 tf-deploy = "deploy.tf_deploy:main"
 bq-deploy = "deploy.bq_deploy:main"
+bq-destroy = "deploy.bq_destroy:main"
 obliterate = "deploy.obliterate:main"
 
 [tool.uv]
