@@ -1,0 +1,81 @@
+{"customer_id":"C001","category":"Housing","monthly_budget_gbp":1700.0}
+{"customer_id":"C001","category":"Groceries","monthly_budget_gbp":300.0}
+{"customer_id":"C001","category":"Transport","monthly_budget_gbp":180.0}
+{"customer_id":"C001","category":"Utilities","monthly_budget_gbp":160.0}
+{"customer_id":"C001","category":"Dining Out","monthly_budget_gbp":150.0}
+{"customer_id":"C001","category":"Entertainment","monthly_budget_gbp":50.0}
+{"customer_id":"C001","category":"Health & Fitness","monthly_budget_gbp":80.0}
+{"customer_id":"C001","category":"Shopping","monthly_budget_gbp":150.0}
+{"customer_id":"C001","category":"Travel","monthly_budget_gbp":100.0}
+{"customer_id":"C002","category":"Housing","monthly_budget_gbp":1000.0}
+{"customer_id":"C002","category":"Groceries","monthly_budget_gbp":250.0}
+{"customer_id":"C002","category":"Transport","monthly_budget_gbp":100.0}
+{"customer_id":"C002","category":"Utilities","monthly_budget_gbp":150.0}
+{"customer_id":"C002","category":"Dining Out","monthly_budget_gbp":100.0}
+{"customer_id":"C002","category":"Health & Fitness","monthly_budget_gbp":150.0}
+{"customer_id":"C002","category":"Entertainment","monthly_budget_gbp":60.0}
+{"customer_id":"C003","category":"Housing","monthly_budget_gbp":1000.0}
+{"customer_id":"C003","category":"Groceries","monthly_budget_gbp":200.0}
+{"customer_id":"C003","category":"Transport","monthly_budget_gbp":80.0}
+{"customer_id":"C003","category":"Utilities","monthly_budget_gbp":120.0}
+{"customer_id":"C003","category":"Dining Out","monthly_budget_gbp":200.0}
+{"customer_id":"C003","category":"Entertainment","monthly_budget_gbp":80.0}
+{"customer_id":"C003","category":"Health & Fitness","monthly_budget_gbp":50.0}
+{"customer_id":"C003","category":"Shopping","monthly_budget_gbp":200.0}
+{"customer_id":"C004","category":"Housing","monthly_budget_gbp":600.0}
+{"customer_id":"C004","category":"Groceries","monthly_budget_gbp":200.0}
+{"customer_id":"C004","category":"Transport","monthly_budget_gbp":120.0}
+{"customer_id":"C004","category":"Utilities","monthly_budget_gbp":180.0}
+{"customer_id":"C004","category":"Health & Fitness","monthly_budget_gbp":100.0}
+{"customer_id":"C004","category":"Dining Out","monthly_budget_gbp":80.0}
+{"customer_id":"C005","category":"Housing","monthly_budget_gbp":1300.0}
+{"customer_id":"C005","category":"Groceries","monthly_budget_gbp":280.0}
+{"customer_id":"C005","category":"Transport","monthly_budget_gbp":100.0}
+{"customer_id":"C005","category":"Utilities","monthly_budget_gbp":140.0}
+{"customer_id":"C005","category":"Dining Out","monthly_budget_gbp":200.0}
+{"customer_id":"C005","category":"Entertainment","monthly_budget_gbp":80.0}
+{"customer_id":"C005","category":"Health & Fitness","monthly_budget_gbp":60.0}
+{"customer_id":"C005","category":"Shopping","monthly_budget_gbp":200.0}
+{"customer_id":"C005","category":"Travel","monthly_budget_gbp":200.0}
+{"customer_id":"C005","category":"Savings","monthly_budget_gbp":800.0}
+{"customer_id":"C006","category":"Groceries","monthly_budget_gbp":120.0}
+{"customer_id":"C006","category":"Transport","monthly_budget_gbp":60.0}
+{"customer_id":"C006","category":"Utilities","monthly_budget_gbp":60.0}
+{"customer_id":"C006","category":"Dining Out","monthly_budget_gbp":100.0}
+{"customer_id":"C006","category":"Entertainment","monthly_budget_gbp":50.0}
+{"customer_id":"C006","category":"Shopping","monthly_budget_gbp":80.0}
+{"customer_id":"C007","category":"Housing","monthly_budget_gbp":2000.0}
+{"customer_id":"C007","category":"Groceries","monthly_budget_gbp":350.0}
+{"customer_id":"C007","category":"Transport","monthly_budget_gbp":200.0}
+{"customer_id":"C007","category":"Utilities","monthly_budget_gbp":200.0}
+{"customer_id":"C007","category":"Dining Out","monthly_budget_gbp":150.0}
+{"customer_id":"C007","category":"Entertainment","monthly_budget_gbp":80.0}
+{"customer_id":"C007","category":"Health & Fitness","monthly_budget_gbp":80.0}
+{"customer_id":"C007","category":"Shopping","monthly_budget_gbp":300.0}
+{"customer_id":"C008","category":"Housing","monthly_budget_gbp":500.0}
+{"customer_id":"C008","category":"Groceries","monthly_budget_gbp":300.0}
+{"customer_id":"C008","category":"Transport","monthly_budget_gbp":150.0}
+{"customer_id":"C008","category":"Utilities","monthly_budget_gbp":200.0}
+{"customer_id":"C008","category":"Dining Out","monthly_budget_gbp":200.0}
+{"customer_id":"C008","category":"Health & Fitness","monthly_budget_gbp":200.0}
+{"customer_id":"C008","category":"Entertainment","monthly_budget_gbp":100.0}
+{"customer_id":"C008","category":"Travel","monthly_budget_gbp":300.0}
+{"customer_id":"C009","category":"Housing","monthly_budget_gbp":1100.0}
+{"customer_id":"C009","category":"Groceries","monthly_budget_gbp":280.0}
+{"customer_id":"C009","category":"Transport","monthly_budget_gbp":80.0}
+{"customer_id":"C009","category":"Utilities","monthly_budget_gbp":140.0}
+{"customer_id":"C009","category":"Dining Out","monthly_budget_gbp":100.0}
+{"customer_id":"C009","category":"Entertainment","monthly_budget_gbp":40.0}
+{"customer_id":"C009","category":"Childcare","monthly_budget_gbp":800.0}
+{"customer_id":"C009","category":"Health & Fitness","monthly_budget_gbp":60.0}
+{"customer_id":"C009","category":"Shopping","monthly_budget_gbp":150.0}
+{"customer_id":"C010","category":"Housing","monthly_budget_gbp":1800.0}
+{"customer_id":"C010","category":"Groceries","monthly_budget_gbp":400.0}
+{"customer_id":"C010","category":"Transport","monthly_budget_gbp":300.0}
+{"customer_id":"C010","category":"Utilities","monthly_budget_gbp":250.0}
+{"customer_id":"C010","category":"Dining Out","monthly_budget_gbp":400.0}
+{"customer_id":"C010","category":"Entertainment","monthly_budget_gbp":150.0}
+{"customer_id":"C010","category":"Health & Fitness","monthly_budget_gbp":150.0}
+{"customer_id":"C010","category":"Shopping","monthly_budget_gbp":500.0}
+{"customer_id":"C010","category":"Travel","monthly_budget_gbp":500.0}
+{"customer_id":"C010","category":"Savings","monthly_budget_gbp":2000.0}

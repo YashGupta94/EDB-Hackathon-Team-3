@@ -1,5 +1,10 @@
-{"customer_id":"C001","name":"Alice Thornton","dob":"1985-03-12","postcode":"SW1A 1AA","address":"10 Downing Street, London","age":39,"gender":"F","phone":"07700900001"}
-{"customer_id":"C002","name":"Bob Hargreaves","dob":"1972-07-24","postcode":"EC1A 1BB","address":"1 Barbican, London","age":52,"gender":"M","phone":"07700900002"}
-{"customer_id":"C003","name":"Clara Nguyen","dob":"1990-11-05","postcode":"M1 1AE","address":"1 Piccadilly, Manchester","age":34,"gender":"F","phone":"07700900003"}
-{"customer_id":"C004","name":"David Okonkwo","dob":"1968-01-30","postcode":"B1 1BB","address":"1 Corporation Street, Birmingham","age":56,"gender":"M","phone":"07700900004"}
-{"customer_id":"C005","name":"Evelyn Marchetti","dob":"1995-06-18","postcode":"EH1 1YZ","address":"1 Royal Mile, Edinburgh","age":29,"gender":"F","phone":"07700900005"}
+{"customer_id":"C001","name":"Alice Thornton","dob":"1985-03-12","postcode":"SW1A 1AA","address":"10 Downing Street, London","age":39,"gender":"F","phone":"07700900001","email":"alice.thornton@email.co.uk","income_band":"25k_40k"}
+{"customer_id":"C002","name":"Bob Hargreaves","dob":"1972-07-24","postcode":"EC1A 1BB","address":"1 Barbican, London","age":52,"gender":"M","phone":"07700900002","email":"bob.hargreaves@email.co.uk","income_band":"25k_40k"}
+{"customer_id":"C003","name":"Clara Nguyen","dob":"1990-11-05","postcode":"M1 1AE","address":"1 Piccadilly, Manchester","age":34,"gender":"F","phone":"07700900003","email":"clara.nguyen@email.co.uk","income_band":"25k_40k"}
+{"customer_id":"C004","name":"David Okonkwo","dob":"1968-01-30","postcode":"B1 1BB","address":"1 Corporation Street, Birmingham","age":56,"gender":"M","phone":"07700900004","email":"david.okonkwo@email.co.uk","income_band":"under_25k"}
+{"customer_id":"C005","name":"Evelyn Marchetti","dob":"1995-06-18","postcode":"EH1 1YZ","address":"1 Royal Mile, Edinburgh","age":29,"gender":"F","phone":"07700900005","email":"evelyn.marchetti@email.co.uk","income_band":"40k_75k"}
+{"customer_id":"C006","name":"Freddie Patel","dob":"2003-09-14","postcode":"N1 9GU","address":"42 Islington Green, London","age":22,"gender":"M","phone":"07700900006","email":"freddie.patel@email.co.uk","income_band":"under_25k"}
+{"customer_id":"C007","name":"Grace Williams","dob":"1982-04-22","postcode":"KT1 1HQ","address":"15 Kingston Hill, Kingston upon Thames","age":42,"gender":"F","phone":"07700900007","email":"grace.williams@email.co.uk","income_band":"40k_75k"}
+{"customer_id":"C008","name":"Henry Clarke","dob":"1961-11-03","postcode":"BS1 4ST","address":"3 Corn Street, Bristol","age":63,"gender":"M","phone":"07700900008","email":"henry.clarke@email.co.uk","income_band":"40k_75k"}
+{"customer_id":"C009","name":"Isla Mackenzie","dob":"1993-08-17","postcode":"G1 1AT","address":"7 George Square, Glasgow","age":31,"gender":"F","phone":"07700900009","email":"isla.mackenzie@email.co.uk","income_band":"25k_40k"}
+{"customer_id":"C010","name":"James Foster","dob":"1977-02-09","postcode":"OX1 1BP","address":"5 Broad Street, Oxford","age":47,"gender":"M","phone":"07700900010","email":"james.foster@email.co.uk","income_band":"75k_plus"}

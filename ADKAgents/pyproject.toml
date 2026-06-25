@@ -7,6 +7,8 @@ dependencies = [
     "google-adk>=1.29.0",
     "google-cloud-aiplatform>=1.0.0",
     "google-cloud-bigquery>=3.0.0",
+    "google-cloud-bigquery-storage>=2.0.0",
+    "pyarrow>=14.0.0",
     "google-cloud-discoveryengine>=0.11.0",
     "rich>=13.0.0",
     "pandas>=2.0.0",
@@ -33,7 +35,16 @@ obliterate = "deploy.obliterate:main"
 package = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["bank_agent", "deploy", "setup_env.py"]
+packages = [
+    "bank_agent",
+    "spending_agent",
+    "product_agent",
+    "customer_profile_agent",
+    "financial_wellbeing_agent",
+    "life_event_agent",
+    "deploy",
+    "setup_env.py",
+]
 
 [build-system]
 requires = ["hatchling"]

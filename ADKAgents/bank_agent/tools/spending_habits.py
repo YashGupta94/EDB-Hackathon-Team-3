@@ -17,69 +17,151 @@ PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "")
 BQ_DATASET = os.getenv("BQ_DATASET", "")
 ECOMMERCE_DATASET = os.getenv("ECOMMERCE_DATASET", "ecommerce_data")
 
+_CATEGORY_MAP = {
+    "rent": "Housing", "mortgage": "Housing", "council tax": "Housing",
+    "buildings insurance": "Housing", "contents insurance": "Housing",
+    "stamp duty": "Housing", "solicitor": "Housing", "conveyancing": "Housing",
+    "train": "Transport", "tfl": "Transport", "bus": "Transport",
+    "fuel": "Transport", "car insurance": "Transport", "parking": "Transport",
+    "uber": "Transport", "scotrail": "Transport", "season ticket": "Transport",
+    "tesco": "Groceries", "sainsbury": "Groceries", "waitrose": "Groceries",
+    "asda": "Groceries", "m&s food": "Groceries", "aldi": "Groceries",
+    "lidl": "Groceries", "supermarket": "Groceries",
+    "restaurant": "Dining Out", "deliveroo": "Dining Out", "just eat": "Dining Out",
+    "costa": "Dining Out", "starbucks": "Dining Out", "coffee shop": "Dining Out",
+    "mcdonald": "Dining Out", "nando": "Dining Out", "pret": "Dining Out",
+    "pizza": "Dining Out", "greggs": "Dining Out", "itsu": "Dining Out",
+    "netflix": "Entertainment", "spotify": "Entertainment", "amazon prime": "Entertainment",
+    "cinema": "Entertainment", "disney+": "Entertainment", "sky": "Entertainment",
+    "steam": "Entertainment", "streaming": "Entertainment",
+    "gym": "Health & Fitness", "pharmacy": "Health & Fitness", "dentist": "Health & Fitness",
+    "health insurance": "Health & Fitness", "bupa": "Health & Fitness",
+    "nhs": "Health & Fitness", "boots": "Health & Fitness",
+    "amazon": "Shopping", "asos": "Shopping", "john lewis": "Shopping",
+    "next": "Shopping", "marks & spencer": "Shopping", "zara": "Shopping",
+    "homebase": "Shopping", "ikea": "Shopping",
+    "electricity": "Utilities", "edf": "Utilities", "gas": "Utilities",
+    "water": "Utilities", "broadband": "Utilities", "mobile": "Utilities",
+    "british gas": "Utilities", "scottish power": "Utilities",
+    "isa transfer": "Savings", "savings transfer": "Savings", "pension": "Savings",
+    "childcare": "Childcare", "nursery": "Childcare", "mothercare": "Childcare",
+    "holiday": "Travel", "easyjet": "Travel", "tui": "Travel",
+    "hotel": "Travel", "flight": "Travel", "airbnb": "Travel",
+    "salary": "Income", "payroll": "Income", "freelance": "Income",
+    "pension income": "Income", "interest": "Income", "dividend": "Income",
+    "probate": "Income", "estate": "Income",
+}
+
 
 def _bq_client() -> bigquery.Client:
     return bigquery.Client(project=PROJECT_ID if PROJECT_ID else None)
 
 
-def _bar(value: float, max_value: float, width: int = 30) -> str:
+def _categorise(description: str) -> str:
+    desc_lower = description.lower()
+    for keyword, cat in _CATEGORY_MAP.items():
+        if keyword in desc_lower:
+            return cat
+    return "Other"
+
+
+def _bar(value: float, max_value: float, width: int = 20) -> str:
     if max_value <= 0:
         return ""
     filled = int((value / max_value) * width)
-    return "█" * filled + " " * (width - filled)
+    return "█" * filled + "░" * (width - filled)
 
 
-def _format_currency(value: float) -> str:
-    return f"${value:,.2f}"
+def _fmt(value: float) -> str:
+    return f"£{value:,.2f}"
 
 
-def _render_top_spend(df: pd.DataFrame, group_key: str, title: str) -> str:
+def _render_category_breakdown(df: pd.DataFrame, cat_col: str, title: str) -> str:
     if df.empty:
         return f"No {title.lower()} found.\n"
-
-    grouped = df.groupby(group_key)["amount"].sum().abs().sort_values(ascending=False)
-    top = grouped.head(5)
-    max_amount = top.max() if not top.empty else 0.0
-
-    lines = [f"Top {title}:\n"]
+    grouped = df.groupby(cat_col)["amount"].sum().abs().sort_values(ascending=False)
+    top = grouped.head(8)
+    max_amt = top.max() if not top.empty else 0.0
+    lines = [f"{title}:"]
     for label, amount in top.items():
-        lines.append(f"  {label:20} | {_bar(amount, max_amount)} | {_format_currency(amount)}")
+        lines.append(f"  {str(label):22} {_bar(amount, max_amt)} {_fmt(amount)}")
     lines.append("")
     return "\n".join(lines)
 
 
-def _render_daily_spend(df: pd.DataFrame) -> str:
-    if df.empty:
-        return "No daily spending data available.\n"
+def _render_mom_comparison(current_df: pd.DataFrame, prior_df: pd.DataFrame) -> str:
+    if current_df.empty:
+        return ""
+    current_by_cat = current_df.groupby("category")["amount"].sum().abs()
+    prior_by_cat = prior_df.groupby("category")["amount"].sum().abs() if not prior_df.empty else pd.Series(dtype=float)
 
-    daily = df.groupby("txn_date")["amount"].sum().abs().sort_index()
-    max_amount = daily.max() if not daily.empty else 0.0
-    lines = ["Daily spending trend (last 30 days):\n"]
-    for txn_date, amount in daily.items():
-        lines.append(f"  {txn_date:%Y-%m-%d} | {_bar(amount, max_amount)} | {_format_currency(amount)}")
+    lines = ["Month-on-Month Category Comparison (last 30 days vs prior 30 days):"]
+    all_cats = sorted(set(current_by_cat.index) | set(prior_by_cat.index))
+    for cat in all_cats:
+        curr = current_by_cat.get(cat, 0.0)
+        prior = prior_by_cat.get(cat, 0.0)
+        if curr == 0 and prior == 0:
+            continue
+        if prior > 0:
+            delta_pct = ((curr - prior) / prior) * 100
+            arrow = "▲" if delta_pct > 5 else ("▼" if delta_pct < -5 else "→")
+            delta_str = f"{arrow} {delta_pct:+.0f}%  ({_fmt(prior)} → {_fmt(curr)})"
+        else:
+            delta_str = f"▲ NEW  (this month: {_fmt(curr)})"
+        lines.append(f"  {str(cat):22} {delta_str}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _render_anomalies(df: pd.DataFrame) -> str:
+    if df.empty:
+        return ""
+    expenses = df[df["amount"] < 0].copy()
+    if expenses.empty:
+        return ""
+    cat_mean = expenses.groupby("category")["amount"].mean().abs()
+    anomalies = []
+    for _, row in expenses.iterrows():
+        cat = row["category"]
+        mean = cat_mean.get(cat, 0)
+        txn_amount = abs(row["amount"])
+        if mean > 0 and txn_amount > mean * 2.5 and txn_amount > 50:
+            anomalies.append({
+                "date": str(row.get("txn_date", row.get("date", "")))[:10],
+                "description": str(row["description"])[:35],
+                "amount": txn_amount,
+                "category": cat,
+                "mean": mean,
+            })
+
+    if not anomalies:
+        return ""
+
+    lines = ["Unusual Spending Detected (>2.5× category average):"]
+    for a in anomalies[:5]:
+        lines.append(
+            f"  ⚠ {a['date']}  {a['description']:35}  {_fmt(a['amount'])}  "
+            f"(avg {_fmt(a['mean'])} in {a['category']})"
+        )
     lines.append("")
     return "\n".join(lines)
 
 
 @traced_tool
 def spending_habits_report() -> str:
-    """Summarizes recent spending habits across the bank and ecommerce datasets."""
+    """Summarises recent spending habits across all customers with category breakdown,
+    daily trend, and ecommerce data."""
     try:
         if not PROJECT_ID:
-            return "Spending Habits Error: GOOGLE_CLOUD_PROJECT is not set in the environment."
+            return "Error: GOOGLE_CLOUD_PROJECT not set."
         if not BQ_DATASET:
-            return "Spending Habits Error: BQ_DATASET is not set in the bank_agent/.env file."
-        if not ECOMMERCE_DATASET:
-            return "Spending Habits Error: ECOMMERCE_DATASET is not set in the bank_agent/.env file."
+            return "Error: BQ_DATASET not set in bank_agent/.env."
 
         client = _bq_client()
 
         bank_sql = f"""
-            SELECT
-                DATE(date) AS txn_date,
-                description,
-                amount,
-                type
+            SELECT DATE(date) AS txn_date, description, amount, type,
+                   COALESCE(category, 'Other') AS category
             FROM `{BQ_DATASET}.transactions`
             WHERE DATE(date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
             ORDER BY txn_date DESC
@@ -87,84 +169,55 @@ def spending_habits_report() -> str:
         bank_df = client.query(bank_sql).to_dataframe()
 
         if not bank_df.empty:
-            bank_df["txn_date"] = pd.to_datetime(bank_df["txn_date"]) 
+            bank_df["txn_date"] = pd.to_datetime(bank_df["txn_date"])
+            if "category" not in bank_df.columns or bank_df["category"].isna().all():
+                bank_df["category"] = bank_df["description"].apply(_categorise)
             expenses_df = bank_df[bank_df["amount"] < 0].copy()
             spending_total = -expenses_df["amount"].sum()
             income_total = bank_df[bank_df["amount"] > 0]["amount"].sum()
-            expense_count = len(expenses_df)
-            average_spend = -expenses_df["amount"].mean() if not expenses_df.empty else 0.0
-            top_descriptions = _render_top_spend(expenses_df, "description", "Bank spending categories")
-            daily_chart = _render_daily_spend(expenses_df)
-            last_month_expenses = expenses_df.sort_values("txn_date", ascending=False)
 
-            bank_summary = [
+            bank_summary = "\n".join([
                 "Bank spending summary (last 30 days):",
-                f"  Total spending: {_format_currency(spending_total)}",
-                f"  Total income:   {_format_currency(income_total)}",
-                f"  Expense count:  {expense_count}",
-                f"  Avg expense:    {_format_currency(average_spend)}",
+                f"  Total spending : {_fmt(spending_total)}",
+                f"  Total income   : {_fmt(income_total)}",
+                f"  Transactions   : {len(expenses_df)}",
                 "",
-                top_descriptions,
-                daily_chart,
-            ]
+                _render_category_breakdown(expenses_df, "category", "Spending by Category"),
+            ])
         else:
-            bank_summary = ["Bank spending summary: No recent bank transactions were found in the last 30 days.\n"]
-            last_month_expenses = pd.DataFrame()
+            bank_summary = "No recent bank transactions in the last 30 days.\n"
 
         ecommerce_sql = f"""
-            SELECT
-                o.order_id,
-                DATE(o.order_date) AS order_date,
-                u.email,
-                p.name AS product_name,
-                p.category,
-                o.quantity,
-                p.price,
-                o.quantity * p.price AS total
+            SELECT DATE(o.order_date) AS order_date, u.email, p.name AS product_name,
+                   p.category, o.quantity, p.price, o.quantity * p.price AS total
             FROM `{ECOMMERCE_DATASET}.orders` o
             JOIN `{ECOMMERCE_DATASET}.users` u ON u.user_id = o.user_id
             JOIN `{ECOMMERCE_DATASET}.products` p ON p.product_id = o.product_id
             WHERE DATE(o.order_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
             ORDER BY order_date DESC
         """
-        ecommerce_df = client.query(ecommerce_sql).to_dataframe()
+        try:
+            ecommerce_df = client.query(ecommerce_sql).to_dataframe()
+            if not ecommerce_df.empty:
+                ecommerce_total = ecommerce_df["total"].sum()
+                cats = ecommerce_df.groupby("category")["total"].sum().sort_values(ascending=False)
+                max_ecom = cats.max() if not cats.empty else 0.0
+                lines = [
+                    "Ecommerce spending summary (last 30 days):",
+                    f"  Total ecommerce spend : {_fmt(ecommerce_total)}",
+                    f"  Orders placed         : {len(ecommerce_df)}",
+                    "",
+                    "Top ecommerce categories:",
+                ]
+                for category, total in cats.head(5).items():
+                    lines.append(f"  {str(category):22} {_bar(total, max_ecom)} {_fmt(total)}")
+                ecommerce_summary = "\n".join(lines)
+            else:
+                ecommerce_summary = "No ecommerce orders in the last 30 days."
+        except Exception:
+            ecommerce_summary = "Ecommerce data unavailable."
 
-        if not ecommerce_df.empty:
-            ecommerce_total = ecommerce_df["total"].sum()
-            order_count = len(ecommerce_df)
-            orders_by_category = ecommerce_df.groupby("category")["total"].sum().abs().sort_values(ascending=False)
-            max_ecom = orders_by_category.max() if not orders_by_category.empty else 0.0
-            lines = ["Ecommerce spending summary (last 30 days):",
-                     f"  Total ecommerce spend: {_format_currency(ecommerce_total)}",
-                     f"  Orders placed: {order_count}",
-                     "",
-                     "Top ecommerce categories:\n"]
-            for category, total in orders_by_category.head(5).items():
-                lines.append(f"  {category:20} | {_bar(total, max_ecom)} | {_format_currency(total)}")
-            lines.append("")
-            ecommerce_summary = "\n".join(lines)
-        else:
-            ecommerce_summary = "Ecommerce spending summary: No ecommerce orders were found in the last 30 days.\n"
-
-        expense_lines = [
-            "Expenses in the last 30 days:",
-        ]
-        if not last_month_expenses.empty:
-            for _, row in last_month_expenses.iterrows():
-                expense_lines.append(
-                    f"  {row['txn_date'].date()} | {row['description'][:30]:30} | {_format_currency(-row['amount'])} | {row['type']}"
-                )
-        else:
-            expense_lines.append("  No bank expenses found in the last 30 days.")
-
-        report_sections = [
-            "Spending habits report:\n",
-            "".join(bank_summary),
-            ecommerce_summary,
-            "\n".join(expense_lines),
-        ]
-
-        return "\n".join(report_sections)
+        return "\n\n".join([bank_summary, ecommerce_summary])
 
     except Exception as e:
         return f"Spending Habits Report Error: {str(e)}"
@@ -172,66 +225,92 @@ def spending_habits_report() -> str:
 
 @traced_tool
 def spending_habits_for_user(customer_or_user_id: str = "") -> str:
-    """Returns a personalized spending summary and expenses for a customer or user."""
+    """Returns a personalised spending summary for a specific customer including:
+    spending by category, month-on-month category comparison, anomaly detection,
+    and ecommerce orders for the last 30 days.
+
+    Args:
+        customer_or_user_id: Customer ID (e.g. C001) or ecommerce user email/ID.
+
+    Returns:
+        Formatted spending report with category breakdown, MoM trends, and anomalies.
+    """
     try:
         identifier = str(customer_or_user_id).strip()
         if not identifier:
-            return (
-                "Please provide a customer ID or ecommerce user ID so I can "
-                "generate a personalized spending habits report."
-            )
+            return "Please provide a customer ID or ecommerce user ID."
 
         client = _bq_client()
 
-        bank_query = f"""
-            SELECT
-                DATE(t.date) AS txn_date,
-                t.description,
-                t.amount,
-                t.type
+        current_sql = f"""
+            SELECT DATE(t.date) AS txn_date, t.description, t.amount, t.type,
+                   COALESCE(t.category, 'Other') AS category
             FROM `{BQ_DATASET}.transactions` t
             JOIN `{BQ_DATASET}.accounts` a ON t.account_id = a.account_id
             WHERE a.customer_id = @identifier
               AND DATE(t.date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
             ORDER BY txn_date DESC
         """
-        bank_job_config = bigquery.QueryJobConfig(
-            query_parameters=[
-                bigquery.ScalarQueryParameter("identifier", "STRING", identifier)
-            ]
+        job_cfg = bigquery.QueryJobConfig(
+            query_parameters=[bigquery.ScalarQueryParameter("identifier", "STRING", identifier)]
         )
-        bank_df = client.query(bank_query, job_config=bank_job_config).to_dataframe()
-        if not bank_df.empty:
-            bank_df["txn_date"] = pd.to_datetime(bank_df["txn_date"])
-            bank_expenses = bank_df[bank_df["amount"] < 0].copy()
-            bank_spend = -bank_expenses["amount"].sum()
-            bank_income = bank_df[bank_df["amount"] > 0]["amount"].sum()
-            bank_summary = [
-                f"Bank spending for customer {identifier} (last 30 days):",
-                f"  Total spend: {_format_currency(bank_spend)}",
-                f"  Total income: {_format_currency(bank_income)}",
-                f"  Expense transactions: {len(bank_expenses)}",
+        current_df = client.query(current_sql, job_config=job_cfg).to_dataframe()
+
+        prior_sql = f"""
+            SELECT DATE(t.date) AS txn_date, t.description, t.amount, t.type,
+                   COALESCE(t.category, 'Other') AS category
+            FROM `{BQ_DATASET}.transactions` t
+            JOIN `{BQ_DATASET}.accounts` a ON t.account_id = a.account_id
+            WHERE a.customer_id = @identifier
+              AND DATE(t.date) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 60 DAY)
+                                   AND DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
+            ORDER BY txn_date DESC
+        """
+        prior_df = client.query(prior_sql, job_config=job_cfg).to_dataframe()
+
+        if not current_df.empty:
+            current_df["txn_date"] = pd.to_datetime(current_df["txn_date"])
+            if current_df["category"].isna().all():
+                current_df["category"] = current_df["description"].apply(_categorise)
+        if not prior_df.empty:
+            prior_df["txn_date"] = pd.to_datetime(prior_df["txn_date"])
+            if prior_df["category"].isna().all():
+                prior_df["category"] = prior_df["description"].apply(_categorise)
+
+        if not current_df.empty:
+            expenses = current_df[current_df["amount"] < 0].copy()
+            income = current_df[current_df["amount"] > 0]["amount"].sum()
+            total_spend = -expenses["amount"].sum()
+            net = income - total_spend
+
+            bank_section = "\n".join([
+                f"Bank spending for {identifier} — last 30 days:",
+                f"  Income   : {_fmt(income)}",
+                f"  Expenses : {_fmt(total_spend)}",
+                f"  Net      : {_fmt(net)}  ({'surplus' if net >= 0 else 'deficit'})",
                 "",
-                _render_top_spend(bank_expenses, "description", "Bank spending categories"),
-                _render_daily_spend(bank_expenses),
-            ]
+                _render_category_breakdown(expenses, "category", "Spending by Category"),
+                _render_mom_comparison(
+                    expenses,
+                    prior_df[prior_df["amount"] < 0].copy() if not prior_df.empty else pd.DataFrame(),
+                ),
+                _render_anomalies(current_df),
+                "Recent transactions:",
+            ])
+            txn_lines = []
+            for _, row in expenses.sort_values("txn_date", ascending=False).head(15).iterrows():
+                txn_lines.append(
+                    f"  {row['txn_date'].date()}  {str(row['description'])[:32]:32}  "
+                    f"{_fmt(-row['amount'])}  [{row['category']}]"
+                )
+            bank_section = bank_section + "\n" + "\n".join(txn_lines)
         else:
-            bank_summary = [
-                f"No bank spending found for customer ID {identifier} in the last 30 days.\n"
-            ]
-            bank_expenses = pd.DataFrame()
+            bank_section = f"No bank transactions found for {identifier} in the last 30 days."
 
         ecommerce_filter = "u.email = @identifier" if "@" in identifier else "u.user_id = @identifier"
-        ecommerce_query = f"""
-            SELECT
-                DATE(o.order_date) AS order_date,
-                u.user_id,
-                u.email,
-                p.name AS product_name,
-                p.category,
-                o.quantity,
-                p.price,
-                o.quantity * p.price AS total
+        ecommerce_sql = f"""
+            SELECT DATE(o.order_date) AS order_date, p.name AS product_name,
+                   p.category, o.quantity, p.price, o.quantity * p.price AS total
             FROM `{ECOMMERCE_DATASET}.orders` o
             JOIN `{ECOMMERCE_DATASET}.users` u ON u.user_id = o.user_id
             JOIN `{ECOMMERCE_DATASET}.products` p ON p.product_id = o.product_id
@@ -239,42 +318,27 @@ def spending_habits_for_user(customer_or_user_id: str = "") -> str:
               AND DATE(o.order_date) >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
             ORDER BY order_date DESC
         """
-        ecommerce_job_config = bigquery.QueryJobConfig(
-            query_parameters=[
-                bigquery.ScalarQueryParameter("identifier", "STRING", identifier)
-            ]
-        )
-        ecommerce_df = client.query(ecommerce_query, job_config=ecommerce_job_config).to_dataframe()
-        if not ecommerce_df.empty:
-            ecommerce_total = ecommerce_df["total"].sum()
-            ecommerce_summary_lines = [
-                f"Ecommerce spend for {identifier} (last 30 days):",
-                f"  Total order value: {_format_currency(ecommerce_total)}",
-                f"  Orders: {len(ecommerce_df)}",
-                "",
-                _render_top_spend(ecommerce_df.rename(columns={"category": "description"}), "description", "Ecommerce categories"),
-            ]
-            ecommerce_summary = "\n".join(ecommerce_summary_lines)
-        else:
-            ecommerce_summary = f"No ecommerce spending found for {identifier} in the last 30 days.\n"
+        try:
+            ecom_df = client.query(
+                ecommerce_sql,
+                job_config=bigquery.QueryJobConfig(
+                    query_parameters=[bigquery.ScalarQueryParameter("identifier", "STRING", identifier)]
+                ),
+            ).to_dataframe()
+            if not ecom_df.empty:
+                ecom_total = ecom_df["total"].sum()
+                ecom_section = "\n".join([
+                    f"Ecommerce orders for {identifier} — last 30 days:",
+                    f"  Total: {_fmt(ecom_total)}  |  Orders: {len(ecom_df)}",
+                    "",
+                    _render_category_breakdown(ecom_df, "category", "Ecommerce categories"),
+                ])
+            else:
+                ecom_section = f"No ecommerce orders found for {identifier} in the last 30 days."
+        except Exception:
+            ecom_section = "Ecommerce data unavailable."
 
-        expense_lines = [
-            "Recent expenses and orders:\n"
-        ]
-        if not bank_expenses.empty:
-            for _, row in bank_expenses.sort_values("txn_date", ascending=False).iterrows():
-                expense_lines.append(
-                    f"  BANK | {row['txn_date'].date()} | {row['description'][:30]:30} | {_format_currency(-row['amount'])} | {row['type']}"
-                )
-        if not ecommerce_df.empty:
-            for _, row in ecommerce_df.iterrows():
-                expense_lines.append(
-                    f"  ECOM | {row['order_date'].date()} | {row['product_name'][:30]:30} | {_format_currency(row['total'])} | {row['category']}"
-                )
-        if len(expense_lines) == 1:
-            expense_lines.append("  No recent spending records found for this ID.")
-
-        return "\n".join(["".join(bank_summary), ecommerce_summary, "\n".join(expense_lines)])
+        return "\n\n".join([bank_section, ecom_section])
 
     except Exception as e:
         return f"Spending Habits Error: {str(e)}"

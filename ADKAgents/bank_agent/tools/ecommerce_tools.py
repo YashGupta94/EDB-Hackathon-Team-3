@@ -87,7 +87,7 @@ def sales_reporting_query(sql: str) -> str:
     """Executes a read-only SQL query against the ecommerce dataset.
 
     Use this tool for analytics or reporting questions like finding top
-    selling products or total revenue. Use {ecommerce_dataset} as a
+    selling products or total revenue. Use <ecommerce_dataset> as a
     placeholder for the dataset name and it will be substituted automatically.
 
     The ecommerce dataset contains:
