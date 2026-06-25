@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from google.adk.tools.tool_context import ToolContext
 from google.cloud import bigquery
 
 from ..observability.tool_tracer import traced_tool
@@ -67,17 +68,23 @@ def _product_gaps(product_types: list[str], age: int) -> list[str]:
 
 
 @traced_tool
-def get_customer_profile(customer_id: str) -> str:
+def get_customer_profile(customer_id: str, tool_context: ToolContext) -> str:
     """Builds a detailed financial profile for a customer including life stage, income estimate,
     savings overview, product gaps, premier eligibility, and risk appetite.
 
     Args:
-        customer_id: The customer ID (e.g. C001)
+        customer_id: The customer ID (e.g. C001). If empty, falls back to the verified session customer.
 
     Returns:
         A formatted profile string with all key financial signals.
     """
     try:
+        if not customer_id:
+            customer_id = tool_context.state.get("verified_customer_id", "")
+        if not customer_id:
+            return "No customer ID provided and no verified customer in session. Please verify customer identity first."
+        if not tool_context.state.get("identity_verified"):
+            return "Customer identity has not been verified. Please verify the customer via customer_agent before accessing personal data."
         if not PROJECT_ID or not BQ_DATASET:
             return "Error: GOOGLE_CLOUD_PROJECT or BQ_DATASET not configured."
 

@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from google.adk.tools.tool_context import ToolContext
 from google.cloud import bigquery
 
 from ..observability.tool_tracer import traced_tool
@@ -163,18 +164,24 @@ def _isa_utilisation(customer_id: str, client: bigquery.Client) -> tuple[str, st
 
 
 @traced_tool
-def calculate_wellbeing_score(customer_id: str) -> str:
+def calculate_wellbeing_score(customer_id: str, tool_context: ToolContext) -> str:
     """Calculates a comprehensive Financial Wellbeing Score (0–100) for a customer.
     The score covers four pillars: Emergency Fund, Savings Rate, Debt Management,
     and Budget Adherence. Includes an ISA utilisation check and personalised action plan.
 
     Args:
-        customer_id: The customer ID (e.g. C001)
+        customer_id: The customer ID (e.g. C001). If empty, falls back to the verified session customer.
 
     Returns:
         A formatted wellbeing report with score breakdown and recommendations.
     """
     try:
+        if not customer_id:
+            customer_id = tool_context.state.get("verified_customer_id", "")
+        if not customer_id:
+            return "No customer ID provided and no verified customer in session. Please verify customer identity first."
+        if not tool_context.state.get("identity_verified"):
+            return "Customer identity has not been verified. Please verify the customer via customer_agent before accessing personal data."
         if not PROJECT_ID or not BQ_DATASET:
             return "Error: GOOGLE_CLOUD_PROJECT or BQ_DATASET not configured."
 
@@ -307,4 +314,5 @@ def calculate_wellbeing_score(customer_id: str) -> str:
         ])
 
     except Exception as e:
+        print(f"[financial_wellbeing] ERROR for customer_id={customer_id!r}: {type(e).__name__}: {e}")
         return f"Financial Wellbeing Error: {str(e)}"

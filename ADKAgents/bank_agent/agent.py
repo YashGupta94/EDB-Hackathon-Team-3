@@ -13,17 +13,16 @@ from .observability import (
 )
 from .prompt import AGENT_INSTRUCTION
 from .tools.bigquery_tool import run_bigquery_query
-from .tools.customersearch import customer_database_search, customer_id_search
 from .tools.productsearch import vertex_vector_search
 from .tools.ecommerce_tools import lookup_user_orders, check_product_stock, sales_reporting_query
-from .tools.spending_habits import spending_habits_report, spending_habits_for_user
-from .tools.customer_profile import get_customer_profile
-from .tools.product_recommendation import recommend_products
-from .tools.financial_wellbeing import calculate_wellbeing_score
-from .tools.life_event_detector import detect_life_events
 from .tools.spending_habits import spending_habits_report
+
 from customer_agent.agent import root_agent as customer_agent
 from spending_agent.agent import root_agent as spending_agent
+from customer_profile_agent.agent import root_agent as customer_profile_agent
+from financial_wellbeing_agent.agent import root_agent as financial_wellbeing_agent
+from life_event_agent.agent import root_agent as life_event_agent
+from product_agent.agent import root_agent as product_agent
 
 load_dotenv()
 
@@ -45,32 +44,28 @@ setup_observability()
 root_agent = Agent(
     name="bank_agent",
     model=VertexGemini(model="gemini-2.5-flash"),
-    description="A helpful UK retail banking assistant.",
+    description="Central orchestrator for a UK retail banking assistant.",
     instruction=AGENT_INSTRUCTION,
     tools=[
-        # Identity & customer data
-        customer_id_search,
-        customer_database_search,
-        # Spending analysis
+        # Cross-customer aggregate analytics (not customer-specific)
         spending_habits_report,
-        spending_habits_for_user,
-        # Financial profiling
-        get_customer_profile,
-        calculate_wellbeing_score,
-        # Product intelligence
-        recommend_products,
-        # Life event detection (standout feature)
-        detect_life_events,
-        # Search & discovery
+        # Semantic search on banking policies and FAQs
         vertex_vector_search,
+        # Generic read-only SQL analytics
         run_bigquery_query,
-        # Ecommerce
+        # Ecommerce data
         lookup_user_orders,
         check_product_stock,
         sales_reporting_query,
     ],
-    #tools=[customer_id_search, customer_database_search, vertex_vector_search, run_bigquery_query, lookup_user_orders, check_product_stock, sales_reporting_query, spending_habits_report],
-    sub_agents=[customer_agent, spending_agent],
+    sub_agents=[
+        customer_agent,
+        spending_agent,
+        customer_profile_agent,
+        financial_wellbeing_agent,
+        life_event_agent,
+        product_agent,
+    ],
     before_model_callback=before_model_callback,
     after_model_callback=after_model_callback,
 )

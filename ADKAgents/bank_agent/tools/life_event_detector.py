@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from google.adk.tools.tool_context import ToolContext
 from google.cloud import bigquery
 
 from ..observability.tool_tracer import traced_tool
@@ -218,18 +219,24 @@ def _detect_signals(txn_df) -> list[dict]:
 
 
 @traced_tool
-def detect_life_events(customer_id: str) -> str:
+def detect_life_events(customer_id: str, tool_context: ToolContext) -> str:
     """Scans the last 90 days of transaction data for signals of major life events such as
     a house purchase, new baby, inheritance/windfall, job change, or retirement planning.
     Returns detected events with confidence levels and personalised product/action recommendations.
 
     Args:
-        customer_id: The customer ID (e.g. C001)
+        customer_id: The customer ID (e.g. C001). If empty, falls back to the verified session customer.
 
     Returns:
         A formatted report of detected life events and recommended next steps.
     """
     try:
+        if not customer_id:
+            customer_id = tool_context.state.get("verified_customer_id", "")
+        if not customer_id:
+            return "No customer ID provided and no verified customer in session. Please verify customer identity first."
+        if not tool_context.state.get("identity_verified"):
+            return "Customer identity has not been verified. Please verify the customer via customer_agent before accessing personal data."
         if not PROJECT_ID or not BQ_DATASET:
             return "Error: GOOGLE_CLOUD_PROJECT or BQ_DATASET not configured."
 
