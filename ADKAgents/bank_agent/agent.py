@@ -21,6 +21,9 @@ from .tools.customer_profile import get_customer_profile
 from .tools.product_recommendation import recommend_products
 from .tools.financial_wellbeing import calculate_wellbeing_score
 from .tools.life_event_detector import detect_life_events
+from .tools.spending_habits import spending_habits_report
+from customer_agent.agent import root_agent as customer_agent
+from spending_agent.agent import root_agent as spending_agent
 
 load_dotenv()
 
@@ -66,6 +69,8 @@ root_agent = Agent(
         check_product_stock,
         sales_reporting_query,
     ],
+    #tools=[customer_id_search, customer_database_search, vertex_vector_search, run_bigquery_query, lookup_user_orders, check_product_stock, sales_reporting_query, spending_habits_report],
+    sub_agents=[customer_agent, spending_agent],
     before_model_callback=before_model_callback,
     after_model_callback=after_model_callback,
 )

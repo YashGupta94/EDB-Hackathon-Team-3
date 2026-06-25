@@ -15,12 +15,11 @@ load_dotenv(
 
 from .prompt import AGENT_INSTRUCTION
 from bank_agent.tools.bigquery_tool import run_bigquery_query
-from bank_agent.tools.ecommerce_tools import lookup_user_orders, sales_reporting_query
-from bank_agent.tools.spending_habits import spending_habits_for_user
+from bank_agent.tools.customersearch import customer_database_search, customer_id_search
 
 
 class VertexGemini(Gemini):
-    """Gemini model that uses Vertex AI ADC for this agent."""
+    """Gemini model that unconditionally uses Vertex AI (ADC) instead of an API key."""
 
     @cached_property
     def api_client(self) -> Client:
@@ -32,12 +31,10 @@ class VertexGemini(Gemini):
 
 
 root_agent = Agent(
-    name="spending_habits_agent",
+    name="customer_agent",
     model=VertexGemini(model="gemini-2.5-flash"),
-    description="A dedicated spending habits assistant.",
+    description="A helpful customer agent to retrieve customer information.",
     instruction=AGENT_INSTRUCTION,
-    tools=[
-        spending_habits_for_user,
-        run_bigquery_query,
-    ],
+    #tools=[customer_id_search, customer_database_search, vertex_vector_search, run_bigquery_query, lookup_user_orders, check_product_stock, sales_reporting_query, spending_habits_report],
+    tools=[customer_id_search, customer_database_search, run_bigquery_query],
 )
