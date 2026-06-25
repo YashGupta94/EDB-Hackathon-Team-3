@@ -18,6 +18,7 @@ from .tools.productsearch import vertex_vector_search
 from .tools.ecommerce_tools import lookup_user_orders, check_product_stock, sales_reporting_query
 from .tools.spending_habits import spending_habits_report
 from customer_agent.agent import root_agent as customer_agent
+from enquiry_agent.agent import root_agent as enquiry_agent
 from spending_agent.agent import root_agent as spending_agent
 
 load_dotenv()
@@ -44,7 +45,7 @@ root_agent = Agent(
     description="A helpful banking .",
     instruction=AGENT_INSTRUCTION,
     #tools=[customer_id_search, customer_database_search, vertex_vector_search, run_bigquery_query, lookup_user_orders, check_product_stock, sales_reporting_query, spending_habits_report],
-    sub_agents=[customer_agent, spending_agent],
+    sub_agents=[customer_agent, spending_agent, enquiry_agent],
     before_model_callback=before_model_callback,
     after_model_callback=after_model_callback,
 )
