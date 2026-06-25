@@ -18,6 +18,7 @@ from .tools.ecommerce_tools import lookup_user_orders, check_product_stock, sale
 from .tools.spending_habits import spending_habits_report
 
 from customer_agent.agent import root_agent as customer_agent
+from enquiry_agent.agent import root_agent as enquiry_agent
 from spending_agent.agent import root_agent as spending_agent
 from customer_profile_agent.agent import root_agent as customer_profile_agent
 from financial_wellbeing_agent.agent import root_agent as financial_wellbeing_agent
@@ -50,22 +51,24 @@ root_agent = Agent(
         # Cross-customer aggregate analytics (not customer-specific)
         spending_habits_report,
         # Semantic search on banking policies and FAQs
-        vertex_vector_search,
+        # vertex_vector_search,
         # Generic read-only SQL analytics
-        run_bigquery_query,
+        # run_bigquery_query,
         # Ecommerce data
-        lookup_user_orders,
-        check_product_stock,
-        sales_reporting_query,
+        # lookup_user_orders,
+        # check_product_stock,
+        # sales_reporting_query,
     ],
     sub_agents=[
         customer_agent,
+        enquiry_agent,
         spending_agent,
         customer_profile_agent,
         financial_wellbeing_agent,
         life_event_agent,
         product_agent,
     ],
+    #tools=[customer_id_search, customer_database_search, vertex_vector_search, run_bigquery_query, lookup_user_orders, check_product_stock, sales_reporting_query, spending_habits_report],
     before_model_callback=before_model_callback,
     after_model_callback=after_model_callback,
 )
