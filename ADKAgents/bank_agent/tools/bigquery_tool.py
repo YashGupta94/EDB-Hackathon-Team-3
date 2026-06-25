@@ -1,11 +1,15 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from google.cloud import bigquery
 
 from ..observability.tool_tracer import traced_tool
 
-load_dotenv()
+load_dotenv(
+    str(Path(__file__).resolve().parent.parent / ".env"),
+    override=False,
+)
 
 PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "")
 BQ_DATASET = os.getenv("BQ_DATASET", "")
