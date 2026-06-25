@@ -1,9 +1,19 @@
-{"account_id":"A001","customer_id":"C001","product_type":"Current Account","balance":2450.75}
-{"account_id":"A002","customer_id":"C001","product_type":"Savings Account","balance":12000.00}
-{"account_id":"A003","customer_id":"C002","product_type":"Current Account","balance":850.20}
-{"account_id":"A004","customer_id":"C002","product_type":"ISA","balance":5500.00}
-{"account_id":"A005","customer_id":"C003","product_type":"Current Account","balance":3100.50}
-{"account_id":"A006","customer_id":"C004","product_type":"Current Account","balance":420.10}
-{"account_id":"A007","customer_id":"C004","product_type":"Mortgage","balance":-185000.00}
-{"account_id":"A008","customer_id":"C005","product_type":"Current Account","balance":6780.00}
-{"account_id":"A009","customer_id":"C005","product_type":"Savings Account","balance":9200.00}
+{"account_id":"A001","customer_id":"C001","product_type":"Current Account","balance":2450.75,"opened_date":"2015-06-01","interest_rate":0.0}
+{"account_id":"A002","customer_id":"C001","product_type":"Savings Account","balance":12000.00,"opened_date":"2018-03-15","interest_rate":0.038}
+{"account_id":"A003","customer_id":"C002","product_type":"Current Account","balance":850.20,"opened_date":"2010-09-01","interest_rate":0.0}
+{"account_id":"A004","customer_id":"C002","product_type":"Cash ISA","balance":5500.00,"opened_date":"2020-04-06","interest_rate":0.045}
+{"account_id":"A005","customer_id":"C003","product_type":"Current Account","balance":3100.50,"opened_date":"2019-11-01","interest_rate":0.0}
+{"account_id":"A006","customer_id":"C004","product_type":"Current Account","balance":420.10,"opened_date":"2005-02-01","interest_rate":0.0}
+{"account_id":"A007","customer_id":"C004","product_type":"Mortgage","balance":-185000.00,"opened_date":"2012-07-15","interest_rate":0.048}
+{"account_id":"A008","customer_id":"C005","product_type":"Current Account","balance":6780.00,"opened_date":"2021-08-01","interest_rate":0.0}
+{"account_id":"A009","customer_id":"C005","product_type":"Savings Account","balance":9200.00,"opened_date":"2022-01-10","interest_rate":0.038}
+{"account_id":"A010","customer_id":"C006","product_type":"Student Current Account","balance":450.00,"opened_date":"2024-09-01","interest_rate":0.0}
+{"account_id":"A011","customer_id":"C007","product_type":"Current Account","balance":3800.00,"opened_date":"2008-05-20","interest_rate":0.0}
+{"account_id":"A012","customer_id":"C007","product_type":"Mortgage","balance":-280000.00,"opened_date":"2026-04-10","interest_rate":0.048}
+{"account_id":"A013","customer_id":"C008","product_type":"Current Account","balance":15200.00,"opened_date":"1998-03-01","interest_rate":0.0}
+{"account_id":"A014","customer_id":"C008","product_type":"Stocks & Shares ISA","balance":45000.00,"opened_date":"2010-04-06","interest_rate":0.072}
+{"account_id":"A015","customer_id":"C008","product_type":"Fixed-Rate Bond","balance":30000.00,"opened_date":"2025-09-01","interest_rate":0.052}
+{"account_id":"A016","customer_id":"C009","product_type":"Current Account","balance":2100.00,"opened_date":"2020-02-14","interest_rate":0.0}
+{"account_id":"A017","customer_id":"C009","product_type":"Savings Account","balance":6500.00,"opened_date":"2022-06-01","interest_rate":0.038}
+{"account_id":"A018","customer_id":"C010","product_type":"Current Account","balance":28500.00,"opened_date":"2003-11-01","interest_rate":0.0}
+{"account_id":"A019","customer_id":"C010","product_type":"Savings Account","balance":15000.00,"opened_date":"2015-04-01","interest_rate":0.038}

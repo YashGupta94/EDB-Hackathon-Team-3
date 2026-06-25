@@ -1,19 +1,311 @@
-{"account_id":"A001","description":"Supermarket","amount":-45.80,"type":"debit","date":"2026-06-12"}
-{"account_id":"A001","description":"Salary - Acme Corp","amount":3200.00,"type":"credit","date":"2026-06-01"}
-{"account_id":"A001","description":"Streaming Service","amount":-17.99,"type":"debit","date":"2026-05-28"}
-{"account_id":"A001","description":"Electricity Bill","amount":-82.50,"type":"debit","date":"2026-05-20"}
-{"account_id":"A001","description":"Salary - Acme Corp","amount":3200.00,"type":"credit","date":"2026-05-01"}
-{"account_id":"A002","description":"Interest Payment","amount":24.50,"type":"credit","date":"2026-06-01"}
-{"account_id":"A003","description":"Coffee Shop","amount":-4.75,"type":"debit","date":"2026-06-13"}
-{"account_id":"A003","description":"Payroll - City Council","amount":2800.00,"type":"credit","date":"2026-06-01"}
-{"account_id":"A003","description":"Online Retailer","amount":-32.99,"type":"debit","date":"2026-05-30"}
-{"account_id":"A003","description":"Council Tax","amount":-145.00,"type":"debit","date":"2026-05-15"}
-{"account_id":"A005","description":"Freelance Invoice","amount":1500.00,"type":"credit","date":"2026-06-10"}
-{"account_id":"A005","description":"Rent","amount":-950.00,"type":"debit","date":"2026-06-01"}
-{"account_id":"A005","description":"Gym Membership","amount":-35.00,"type":"debit","date":"2026-05-25"}
-{"account_id":"A006","description":"Pension","amount":1200.00,"type":"credit","date":"2026-06-01"}
-{"account_id":"A006","description":"Supermarket","amount":-67.30,"type":"debit","date":"2026-06-09"}
-{"account_id":"A008","description":"Salary - EDB Corp","amount":4500.00,"type":"credit","date":"2026-06-01"}
-{"account_id":"A008","description":"Mortgage Payment","amount":-1200.00,"type":"debit","date":"2026-06-03"}
-{"account_id":"A008","description":"Holiday Booking","amount":-850.00,"type":"debit","date":"2026-05-22"}
-{"account_id":"A009","description":"ISA Transfer","amount":500.00,"type":"credit","date":"2026-06-01"}
+{"account_id":"A001","description":"Salary - Acme Corp","amount":3200.0,"type":"credit","date":"2026-03-01","category":"Income"}
+{"account_id":"A001","description":"Rent - London Lettings","amount":-1500.0,"type":"debit","date":"2026-03-01","category":"Housing"}
+{"account_id":"A001","description":"Council Tax - Westminster","amount":-180.0,"type":"debit","date":"2026-03-03","category":"Housing"}
+{"account_id":"A001","description":"TFL Monthly Pass","amount":-165.0,"type":"debit","date":"2026-03-07","category":"Transport"}
+{"account_id":"A001","description":"Waitrose","amount":-143.5,"type":"debit","date":"2026-03-10","category":"Groceries"}
+{"account_id":"A001","description":"EDF Energy","amount":-82.5,"type":"debit","date":"2026-03-12","category":"Utilities"}
+{"account_id":"A001","description":"Thames Water","amount":-34.0,"type":"debit","date":"2026-03-12","category":"Utilities"}
+{"account_id":"A001","description":"Netflix","amount":-13.99,"type":"debit","date":"2026-03-14","category":"Entertainment"}
+{"account_id":"A001","description":"Spotify","amount":-9.99,"type":"debit","date":"2026-03-15","category":"Entertainment"}
+{"account_id":"A001","description":"Deliveroo","amount":-34.5,"type":"debit","date":"2026-03-18","category":"Dining Out"}
+{"account_id":"A001","description":"Boots Pharmacy","amount":-18.75,"type":"debit","date":"2026-03-20","category":"Health & Fitness"}
+{"account_id":"A001","description":"Waitrose","amount":-98.2,"type":"debit","date":"2026-03-22","category":"Groceries"}
+{"account_id":"A001","description":"Amazon","amount":-45.99,"type":"debit","date":"2026-03-25","category":"Shopping"}
+{"account_id":"A001","description":"Costa Coffee","amount":-8.5,"type":"debit","date":"2026-03-28","category":"Dining Out"}
+{"account_id":"A002","description":"Monthly Savings Transfer","amount":300.0,"type":"credit","date":"2026-03-28","category":"Savings"}
+{"account_id":"A002","description":"Interest Payment","amount":12.5,"type":"credit","date":"2026-03-31","category":"Income"}
+{"account_id":"A001","description":"Salary - Acme Corp","amount":3200.0,"type":"credit","date":"2026-04-01","category":"Income"}
+{"account_id":"A001","description":"Rent - London Lettings","amount":-1500.0,"type":"debit","date":"2026-04-01","category":"Housing"}
+{"account_id":"A001","description":"Council Tax - Westminster","amount":-180.0,"type":"debit","date":"2026-04-03","category":"Housing"}
+{"account_id":"A001","description":"TFL Monthly Pass","amount":-165.0,"type":"debit","date":"2026-04-07","category":"Transport"}
+{"account_id":"A001","description":"Waitrose","amount":-156.8,"type":"debit","date":"2026-04-10","category":"Groceries"}
+{"account_id":"A001","description":"EDF Energy","amount":-79.0,"type":"debit","date":"2026-04-12","category":"Utilities"}
+{"account_id":"A001","description":"Netflix","amount":-13.99,"type":"debit","date":"2026-04-14","category":"Entertainment"}
+{"account_id":"A001","description":"Spotify","amount":-9.99,"type":"debit","date":"2026-04-14","category":"Entertainment"}
+{"account_id":"A001","description":"Restaurant - Wahaca","amount":-48.5,"type":"debit","date":"2026-04-16","category":"Dining Out"}
+{"account_id":"A001","description":"Virgin Active Gym","amount":-45.0,"type":"debit","date":"2026-04-18","category":"Health & Fitness"}
+{"account_id":"A001","description":"Waitrose","amount":-112.3,"type":"debit","date":"2026-04-22","category":"Groceries"}
+{"account_id":"A001","description":"ASOS","amount":-89.95,"type":"debit","date":"2026-04-24","category":"Shopping"}
+{"account_id":"A001","description":"Dentist - Bupa","amount":-95.0,"type":"debit","date":"2026-04-28","category":"Health & Fitness"}
+{"account_id":"A002","description":"Monthly Savings Transfer","amount":300.0,"type":"credit","date":"2026-04-28","category":"Savings"}
+{"account_id":"A002","description":"Interest Payment","amount":38.0,"type":"credit","date":"2026-04-30","category":"Income"}
+{"account_id":"A001","description":"Salary - Acme Corp","amount":3200.0,"type":"credit","date":"2026-05-01","category":"Income"}
+{"account_id":"A001","description":"Rent - London Lettings","amount":-1500.0,"type":"debit","date":"2026-05-01","category":"Housing"}
+{"account_id":"A001","description":"Council Tax - Westminster","amount":-180.0,"type":"debit","date":"2026-05-03","category":"Housing"}
+{"account_id":"A001","description":"TFL Monthly Pass","amount":-165.0,"type":"debit","date":"2026-05-07","category":"Transport"}
+{"account_id":"A001","description":"Waitrose","amount":-138.4,"type":"debit","date":"2026-05-10","category":"Groceries"}
+{"account_id":"A001","description":"EDF Energy","amount":-71.5,"type":"debit","date":"2026-05-12","category":"Utilities"}
+{"account_id":"A001","description":"Netflix","amount":-13.99,"type":"debit","date":"2026-05-14","category":"Entertainment"}
+{"account_id":"A001","description":"Spotify","amount":-9.99,"type":"debit","date":"2026-05-14","category":"Entertainment"}
+{"account_id":"A001","description":"Zara","amount":-120.0,"type":"debit","date":"2026-05-18","category":"Shopping"}
+{"account_id":"A001","description":"TGI Fridays","amount":-42.8,"type":"debit","date":"2026-05-20","category":"Dining Out"}
+{"account_id":"A001","description":"Holiday Booking - easyJet","amount":-380.0,"type":"debit","date":"2026-05-22","category":"Travel"}
+{"account_id":"A001","description":"Waitrose","amount":-95.6,"type":"debit","date":"2026-05-24","category":"Groceries"}
+{"account_id":"A001","description":"Streaming Service - Disney+","amount":-17.99,"type":"debit","date":"2026-05-28","category":"Entertainment"}
+{"account_id":"A002","description":"Monthly Savings Transfer","amount":300.0,"type":"credit","date":"2026-05-28","category":"Savings"}
+{"account_id":"A002","description":"Interest Payment","amount":38.0,"type":"credit","date":"2026-05-31","category":"Income"}
+{"account_id":"A001","description":"Salary - Acme Corp","amount":3200.0,"type":"credit","date":"2026-06-01","category":"Income"}
+{"account_id":"A001","description":"Rent - London Lettings","amount":-1500.0,"type":"debit","date":"2026-06-01","category":"Housing"}
+{"account_id":"A001","description":"Council Tax - Westminster","amount":-180.0,"type":"debit","date":"2026-06-03","category":"Housing"}
+{"account_id":"A001","description":"TFL Monthly Pass","amount":-165.0,"type":"debit","date":"2026-06-07","category":"Transport"}
+{"account_id":"A001","description":"Waitrose","amount":-125.3,"type":"debit","date":"2026-06-10","category":"Groceries"}
+{"account_id":"A001","description":"EDF Energy","amount":-82.5,"type":"debit","date":"2026-06-12","category":"Utilities"}
+{"account_id":"A001","description":"Netflix","amount":-13.99,"type":"debit","date":"2026-06-14","category":"Entertainment"}
+{"account_id":"A001","description":"Spotify","amount":-9.99,"type":"debit","date":"2026-06-14","category":"Entertainment"}
+{"account_id":"A001","description":"Itsu","amount":-22.4,"type":"debit","date":"2026-06-18","category":"Dining Out"}
+{"account_id":"A001","description":"Waitrose","amount":-45.8,"type":"debit","date":"2026-06-22","category":"Groceries"}
+{"account_id":"A002","description":"Monthly Savings Transfer","amount":300.0,"type":"credit","date":"2026-06-22","category":"Savings"}
+{"account_id":"A002","description":"Interest Payment","amount":24.5,"type":"credit","date":"2026-06-23","category":"Income"}
+{"account_id":"A003","description":"Payroll - City Council","amount":2800.0,"type":"credit","date":"2026-03-01","category":"Income"}
+{"account_id":"A003","description":"Rent - Barbican Estates","amount":-950.0,"type":"debit","date":"2026-03-01","category":"Housing"}
+{"account_id":"A003","description":"Council Tax - City of London","amount":-145.0,"type":"debit","date":"2026-03-05","category":"Housing"}
+{"account_id":"A003","description":"Tesco","amount":-112.4,"type":"debit","date":"2026-03-08","category":"Groceries"}
+{"account_id":"A003","description":"British Gas","amount":-88.0,"type":"debit","date":"2026-03-10","category":"Utilities"}
+{"account_id":"A003","description":"Coffee Shop","amount":-4.75,"type":"debit","date":"2026-03-13","category":"Dining Out"}
+{"account_id":"A003","description":"Online Retailer","amount":-32.99,"type":"debit","date":"2026-03-20","category":"Shopping"}
+{"account_id":"A003","description":"Tesco","amount":-98.5,"type":"debit","date":"2026-03-24","category":"Groceries"}
+{"account_id":"A004","description":"ISA Interest","amount":20.6,"type":"credit","date":"2026-03-31","category":"Income"}
+{"account_id":"A003","description":"Payroll - City Council","amount":2800.0,"type":"credit","date":"2026-04-01","category":"Income"}
+{"account_id":"A003","description":"Rent - Barbican Estates","amount":-950.0,"type":"debit","date":"2026-04-01","category":"Housing"}
+{"account_id":"A003","description":"Council Tax - City of London","amount":-145.0,"type":"debit","date":"2026-04-05","category":"Housing"}
+{"account_id":"A003","description":"Tesco","amount":-125.6,"type":"debit","date":"2026-04-09","category":"Groceries"}
+{"account_id":"A003","description":"British Gas","amount":-84.0,"type":"debit","date":"2026-04-11","category":"Utilities"}
+{"account_id":"A003","description":"Costa Coffee","amount":-5.25,"type":"debit","date":"2026-04-15","category":"Dining Out"}
+{"account_id":"A003","description":"Prescription Glasses - Specsavers","amount":-125.0,"type":"debit","date":"2026-04-22","category":"Health & Fitness"}
+{"account_id":"A003","description":"Boots Pharmacy","amount":-12.5,"type":"debit","date":"2026-04-26","category":"Health & Fitness"}
+{"account_id":"A003","description":"Payroll - City Council","amount":2800.0,"type":"credit","date":"2026-05-01","category":"Income"}
+{"account_id":"A003","description":"Rent - Barbican Estates","amount":-950.0,"type":"debit","date":"2026-05-01","category":"Housing"}
+{"account_id":"A003","description":"Council Tax - City of London","amount":-145.0,"type":"debit","date":"2026-05-05","category":"Housing"}
+{"account_id":"A003","description":"Tesco","amount":-108.9,"type":"debit","date":"2026-05-09","category":"Groceries"}
+{"account_id":"A003","description":"British Gas","amount":-80.0,"type":"debit","date":"2026-05-12","category":"Utilities"}
+{"account_id":"A003","description":"Restaurant","amount":-38.5,"type":"debit","date":"2026-05-18","category":"Dining Out"}
+{"account_id":"A003","description":"M&S Clothing","amount":-89.0,"type":"debit","date":"2026-05-22","category":"Shopping"}
+{"account_id":"A003","description":"Payroll - City Council","amount":2800.0,"type":"credit","date":"2026-06-01","category":"Income"}
+{"account_id":"A003","description":"Rent - Barbican Estates","amount":-950.0,"type":"debit","date":"2026-06-01","category":"Housing"}
+{"account_id":"A003","description":"Council Tax - City of London","amount":-145.0,"type":"debit","date":"2026-06-05","category":"Housing"}
+{"account_id":"A003","description":"Coffee Shop","amount":-4.75,"type":"debit","date":"2026-06-13","category":"Dining Out"}
+{"account_id":"A003","description":"Online Retailer","amount":-32.99,"type":"debit","date":"2026-06-15","category":"Shopping"}
+{"account_id":"A003","description":"Tesco","amount":-115.3,"type":"debit","date":"2026-06-20","category":"Groceries"}
+{"account_id":"A005","description":"Freelance Invoice - Blue Sky Studio","amount":1500.0,"type":"credit","date":"2026-03-05","category":"Income"}
+{"account_id":"A005","description":"Rent - Manchester Homes","amount":-950.0,"type":"debit","date":"2026-03-01","category":"Housing"}
+{"account_id":"A005","description":"Council Tax - Manchester","amount":-142.0,"type":"debit","date":"2026-03-07","category":"Housing"}
+{"account_id":"A005","description":"Sainsbury's","amount":-89.4,"type":"debit","date":"2026-03-12","category":"Groceries"}
+{"account_id":"A005","description":"Gym Membership - PureGym","amount":-35.0,"type":"debit","date":"2026-03-15","category":"Health & Fitness"}
+{"account_id":"A005","description":"Uber","amount":-18.5,"type":"debit","date":"2026-03-18","category":"Transport"}
+{"account_id":"A005","description":"Netflix","amount":-13.99,"type":"debit","date":"2026-03-20","category":"Entertainment"}
+{"account_id":"A005","description":"Freelance Invoice - Northern Media","amount":2200.0,"type":"credit","date":"2026-04-02","category":"Income"}
+{"account_id":"A005","description":"Rent - Manchester Homes","amount":-950.0,"type":"debit","date":"2026-04-01","category":"Housing"}
+{"account_id":"A005","description":"Council Tax - Manchester","amount":-142.0,"type":"debit","date":"2026-04-07","category":"Housing"}
+{"account_id":"A005","description":"Sainsbury's","amount":-104.7,"type":"debit","date":"2026-04-10","category":"Groceries"}
+{"account_id":"A005","description":"Gym Membership - PureGym","amount":-35.0,"type":"debit","date":"2026-04-15","category":"Health & Fitness"}
+{"account_id":"A005","description":"Just Eat","amount":-28.9,"type":"debit","date":"2026-04-19","category":"Dining Out"}
+{"account_id":"A005","description":"Freelance Invoice - Blue Sky Studio","amount":1800.0,"type":"credit","date":"2026-05-08","category":"Income"}
+{"account_id":"A005","description":"Rent - Manchester Homes","amount":-950.0,"type":"debit","date":"2026-05-01","category":"Housing"}
+{"account_id":"A005","description":"Council Tax - Manchester","amount":-142.0,"type":"debit","date":"2026-05-07","category":"Housing"}
+{"account_id":"A005","description":"Sainsbury's","amount":-95.8,"type":"debit","date":"2026-05-14","category":"Groceries"}
+{"account_id":"A005","description":"Gym Membership - PureGym","amount":-35.0,"type":"debit","date":"2026-05-15","category":"Health & Fitness"}
+{"account_id":"A005","description":"Freelance Invoice - Blue Sky Studio","amount":1500.0,"type":"credit","date":"2026-06-10","category":"Income"}
+{"account_id":"A005","description":"Rent - Manchester Homes","amount":-950.0,"type":"debit","date":"2026-06-01","category":"Housing"}
+{"account_id":"A005","description":"Council Tax - Manchester","amount":-142.0,"type":"debit","date":"2026-06-07","category":"Housing"}
+{"account_id":"A005","description":"Sainsbury's","amount":-88.2,"type":"debit","date":"2026-06-16","category":"Groceries"}
+{"account_id":"A005","description":"Gym Membership - PureGym","amount":-35.0,"type":"debit","date":"2026-06-15","category":"Health & Fitness"}
+{"account_id":"A006","description":"Pension - Royal London","amount":1200.0,"type":"credit","date":"2026-03-01","category":"Income"}
+{"account_id":"A006","description":"Council Tax - Birmingham","amount":-168.0,"type":"debit","date":"2026-03-05","category":"Housing"}
+{"account_id":"A006","description":"Mortgage Payment - Nationwide","amount":-725.0,"type":"debit","date":"2026-03-05","category":"Housing"}
+{"account_id":"A006","description":"Supermarket - Asda","amount":-67.3,"type":"debit","date":"2026-03-09","category":"Groceries"}
+{"account_id":"A006","description":"British Gas","amount":-95.0,"type":"debit","date":"2026-03-12","category":"Utilities"}
+{"account_id":"A006","description":"NHS Prescription","amount":-9.9,"type":"debit","date":"2026-03-18","category":"Health & Fitness"}
+{"account_id":"A006","description":"Pension - Royal London","amount":1200.0,"type":"credit","date":"2026-04-01","category":"Income"}
+{"account_id":"A006","description":"Council Tax - Birmingham","amount":-168.0,"type":"debit","date":"2026-04-05","category":"Housing"}
+{"account_id":"A006","description":"Mortgage Payment - Nationwide","amount":-725.0,"type":"debit","date":"2026-04-05","category":"Housing"}
+{"account_id":"A006","description":"Supermarket - Asda","amount":-72.4,"type":"debit","date":"2026-04-11","category":"Groceries"}
+{"account_id":"A006","description":"British Gas","amount":-91.0,"type":"debit","date":"2026-04-12","category":"Utilities"}
+{"account_id":"A006","description":"Pension - Royal London","amount":1200.0,"type":"credit","date":"2026-05-01","category":"Income"}
+{"account_id":"A006","description":"Council Tax - Birmingham","amount":-168.0,"type":"debit","date":"2026-05-05","category":"Housing"}
+{"account_id":"A006","description":"Mortgage Payment - Nationwide","amount":-725.0,"type":"debit","date":"2026-05-05","category":"Housing"}
+{"account_id":"A006","description":"Supermarket - Asda","amount":-58.9,"type":"debit","date":"2026-05-09","category":"Groceries"}
+{"account_id":"A006","description":"British Gas","amount":-88.0,"type":"debit","date":"2026-05-12","category":"Utilities"}
+{"account_id":"A006","description":"Pension - Royal London","amount":1200.0,"type":"credit","date":"2026-06-01","category":"Income"}
+{"account_id":"A006","description":"Council Tax - Birmingham","amount":-168.0,"type":"debit","date":"2026-06-05","category":"Housing"}
+{"account_id":"A006","description":"Mortgage Payment - Nationwide","amount":-725.0,"type":"debit","date":"2026-06-05","category":"Housing"}
+{"account_id":"A006","description":"Supermarket - Asda","amount":-67.3,"type":"debit","date":"2026-06-09","category":"Groceries"}
+{"account_id":"A008","description":"Salary - EDB Corp","amount":4500.0,"type":"credit","date":"2026-03-01","category":"Income"}
+{"account_id":"A008","description":"Mortgage Payment","amount":-1200.0,"type":"debit","date":"2026-03-03","category":"Housing"}
+{"account_id":"A008","description":"Council Tax - Edinburgh","amount":-158.0,"type":"debit","date":"2026-03-05","category":"Housing"}
+{"account_id":"A008","description":"Sainsbury's","amount":-145.6,"type":"debit","date":"2026-03-09","category":"Groceries"}
+{"account_id":"A008","description":"ScotRail Season Ticket","amount":-210.0,"type":"debit","date":"2026-03-07","category":"Transport"}
+{"account_id":"A008","description":"Scottish Power","amount":-88.0,"type":"debit","date":"2026-03-12","category":"Utilities"}
+{"account_id":"A008","description":"Netflix","amount":-13.99,"type":"debit","date":"2026-03-14","category":"Entertainment"}
+{"account_id":"A008","description":"Restaurant - Dishoom Edinburgh","amount":-65.0,"type":"debit","date":"2026-03-20","category":"Dining Out"}
+{"account_id":"A009","description":"ISA Transfer","amount":500.0,"type":"credit","date":"2026-03-28","category":"Savings"}
+{"account_id":"A008","description":"Salary - EDB Corp","amount":4500.0,"type":"credit","date":"2026-04-01","category":"Income"}
+{"account_id":"A008","description":"Mortgage Payment","amount":-1200.0,"type":"debit","date":"2026-04-03","category":"Housing"}
+{"account_id":"A008","description":"Council Tax - Edinburgh","amount":-158.0,"type":"debit","date":"2026-04-05","category":"Housing"}
+{"account_id":"A008","description":"Sainsbury's","amount":-132.4,"type":"debit","date":"2026-04-10","category":"Groceries"}
+{"account_id":"A008","description":"ScotRail Season Ticket","amount":-210.0,"type":"debit","date":"2026-04-07","category":"Transport"}
+{"account_id":"A008","description":"Scottish Power","amount":-82.0,"type":"debit","date":"2026-04-12","category":"Utilities"}
+{"account_id":"A008","description":"ASOS","amount":-145.0,"type":"debit","date":"2026-04-18","category":"Shopping"}
+{"account_id":"A008","description":"Gym Membership","amount":-42.0,"type":"debit","date":"2026-04-22","category":"Health & Fitness"}
+{"account_id":"A009","description":"ISA Transfer","amount":500.0,"type":"credit","date":"2026-04-28","category":"Savings"}
+{"account_id":"A008","description":"Salary - EDB Corp","amount":4500.0,"type":"credit","date":"2026-05-01","category":"Income"}
+{"account_id":"A008","description":"Mortgage Payment","amount":-1200.0,"type":"debit","date":"2026-05-03","category":"Housing"}
+{"account_id":"A008","description":"Council Tax - Edinburgh","amount":-158.0,"type":"debit","date":"2026-05-05","category":"Housing"}
+{"account_id":"A008","description":"Sainsbury's","amount":-118.9,"type":"debit","date":"2026-05-11","category":"Groceries"}
+{"account_id":"A008","description":"ScotRail Season Ticket","amount":-210.0,"type":"debit","date":"2026-05-07","category":"Transport"}
+{"account_id":"A008","description":"Scottish Power","amount":-76.5,"type":"debit","date":"2026-05-12","category":"Utilities"}
+{"account_id":"A008","description":"Holiday Booking - TUI","amount":-850.0,"type":"debit","date":"2026-05-22","category":"Travel"}
+{"account_id":"A009","description":"ISA Transfer","amount":500.0,"type":"credit","date":"2026-05-28","category":"Savings"}
+{"account_id":"A009","description":"ISA Interest","amount":29.1,"type":"credit","date":"2026-05-31","category":"Income"}
+{"account_id":"A008","description":"Salary - EDB Corp","amount":4500.0,"type":"credit","date":"2026-06-01","category":"Income"}
+{"account_id":"A008","description":"Mortgage Payment","amount":-1200.0,"type":"debit","date":"2026-06-03","category":"Housing"}
+{"account_id":"A008","description":"Council Tax - Edinburgh","amount":-158.0,"type":"debit","date":"2026-06-05","category":"Housing"}
+{"account_id":"A008","description":"Sainsbury's","amount":-128.7,"type":"debit","date":"2026-06-12","category":"Groceries"}
+{"account_id":"A008","description":"ScotRail Season Ticket","amount":-210.0,"type":"debit","date":"2026-06-07","category":"Transport"}
+{"account_id":"A008","description":"Restaurant - Noto Edinburgh","amount":-78.0,"type":"debit","date":"2026-06-17","category":"Dining Out"}
+{"account_id":"A009","description":"ISA Transfer","amount":500.0,"type":"credit","date":"2026-06-01","category":"Savings"}
+{"account_id":"A010","description":"Part-Time Wages - Coffee Planet","amount":820.0,"type":"credit","date":"2026-03-28","category":"Income"}
+{"account_id":"A010","description":"Sainsbury's","amount":-48.5,"type":"debit","date":"2026-03-10","category":"Groceries"}
+{"account_id":"A010","description":"TFL Pay As You Go","amount":-34.5,"type":"debit","date":"2026-03-14","category":"Transport"}
+{"account_id":"A010","description":"Netflix","amount":-13.99,"type":"debit","date":"2026-03-16","category":"Entertainment"}
+{"account_id":"A010","description":"Spotify","amount":-4.99,"type":"debit","date":"2026-03-20","category":"Entertainment"}
+{"account_id":"A010","description":"McDonald's","amount":-9.8,"type":"debit","date":"2026-03-22","category":"Dining Out"}
+{"account_id":"A010","description":"Part-Time Wages - Coffee Planet","amount":820.0,"type":"credit","date":"2026-04-28","category":"Income"}
+{"account_id":"A010","description":"Sainsbury's","amount":-52.3,"type":"debit","date":"2026-04-12","category":"Groceries"}
+{"account_id":"A010","description":"TFL Pay As You Go","amount":-42.0,"type":"debit","date":"2026-04-18","category":"Transport"}
+{"account_id":"A010","description":"SteamGames","amount":-29.99,"type":"debit","date":"2026-04-24","category":"Entertainment"}
+{"account_id":"A010","description":"Pret A Manger","amount":-7.5,"type":"debit","date":"2026-04-28","category":"Dining Out"}
+{"account_id":"A010","description":"Part-Time Wages - Coffee Planet","amount":820.0,"type":"credit","date":"2026-05-28","category":"Income"}
+{"account_id":"A010","description":"Sainsbury's","amount":-45.9,"type":"debit","date":"2026-05-10","category":"Groceries"}
+{"account_id":"A010","description":"TFL Pay As You Go","amount":-38.0,"type":"debit","date":"2026-05-16","category":"Transport"}
+{"account_id":"A010","description":"Amazon","amount":-35.99,"type":"debit","date":"2026-05-20","category":"Shopping"}
+{"account_id":"A010","description":"Deliveroo","amount":-18.5,"type":"debit","date":"2026-05-24","category":"Dining Out"}
+{"account_id":"A010","description":"Part-Time Wages - Coffee Planet","amount":820.0,"type":"credit","date":"2026-06-28","category":"Income"}
+{"account_id":"A010","description":"Sainsbury's","amount":-50.1,"type":"debit","date":"2026-06-08","category":"Groceries"}
+{"account_id":"A010","description":"TFL Pay As You Go","amount":-41.0,"type":"debit","date":"2026-06-14","category":"Transport"}
+{"account_id":"A010","description":"Greggs","amount":-4.5,"type":"debit","date":"2026-06-18","category":"Dining Out"}
+{"account_id":"A011","description":"Salary - Kingston Council","amount":5500.0,"type":"credit","date":"2026-03-01","category":"Income"}
+{"account_id":"A011","description":"Council Tax - Kingston","amount":-195.0,"type":"debit","date":"2026-03-05","category":"Housing"}
+{"account_id":"A011","description":"Sainsbury's","amount":-178.9,"type":"debit","date":"2026-03-08","category":"Groceries"}
+{"account_id":"A011","description":"South West Trains Season Ticket","amount":-245.0,"type":"debit","date":"2026-03-07","category":"Transport"}
+{"account_id":"A011","description":"EDF Energy","amount":-112.0,"type":"debit","date":"2026-03-10","category":"Utilities"}
+{"account_id":"A011","description":"Sky TV & Broadband","amount":-62.0,"type":"debit","date":"2026-03-12","category":"Utilities"}
+{"account_id":"A011","description":"Amazon","amount":-88.5,"type":"debit","date":"2026-03-18","category":"Shopping"}
+{"account_id":"A011","description":"Salary - Kingston Council","amount":5500.0,"type":"credit","date":"2026-04-01","category":"Income"}
+{"account_id":"A011","description":"HMRC - Stamp Duty Land Tax","amount":-14000.0,"type":"debit","date":"2026-04-05","category":"Housing"}
+{"account_id":"A011","description":"Solicitor - Conveyancing Fee","amount":-2500.0,"type":"debit","date":"2026-04-04","category":"Housing"}
+{"account_id":"A011","description":"Council Tax - Kingston","amount":-195.0,"type":"debit","date":"2026-04-05","category":"Housing"}
+{"account_id":"A011","description":"Sainsbury's","amount":-195.6,"type":"debit","date":"2026-04-12","category":"Groceries"}
+{"account_id":"A011","description":"South West Trains Season Ticket","amount":-245.0,"type":"debit","date":"2026-04-07","category":"Transport"}
+{"account_id":"A011","description":"EDF Energy","amount":-108.0,"type":"debit","date":"2026-04-10","category":"Utilities"}
+{"account_id":"A012","description":"Mortgage Payment - Barclays","amount":-1450.0,"type":"debit","date":"2026-05-01","category":"Housing"}
+{"account_id":"A011","description":"Salary - Kingston Council","amount":5500.0,"type":"credit","date":"2026-05-01","category":"Income"}
+{"account_id":"A011","description":"Council Tax - Kingston","amount":-195.0,"type":"debit","date":"2026-05-05","category":"Housing"}
+{"account_id":"A011","description":"Homebase - DIY Supplies","amount":-289.5,"type":"debit","date":"2026-05-12","category":"Shopping"}
+{"account_id":"A011","description":"Sainsbury's","amount":-210.4,"type":"debit","date":"2026-05-15","category":"Groceries"}
+{"account_id":"A011","description":"South West Trains Season Ticket","amount":-245.0,"type":"debit","date":"2026-05-07","category":"Transport"}
+{"account_id":"A011","description":"EDF Energy","amount":-104.0,"type":"debit","date":"2026-05-10","category":"Utilities"}
+{"account_id":"A011","description":"IKEA","amount":-545.0,"type":"debit","date":"2026-05-18","category":"Shopping"}
+{"account_id":"A012","description":"Mortgage Payment - Barclays","amount":-1450.0,"type":"debit","date":"2026-06-01","category":"Housing"}
+{"account_id":"A011","description":"Salary - Kingston Council","amount":5500.0,"type":"credit","date":"2026-06-01","category":"Income"}
+{"account_id":"A011","description":"Council Tax - Kingston","amount":-195.0,"type":"debit","date":"2026-06-05","category":"Housing"}
+{"account_id":"A011","description":"Sainsbury's","amount":-192.8,"type":"debit","date":"2026-06-10","category":"Groceries"}
+{"account_id":"A011","description":"South West Trains Season Ticket","amount":-245.0,"type":"debit","date":"2026-06-07","category":"Transport"}
+{"account_id":"A011","description":"EDF Energy","amount":-98.0,"type":"debit","date":"2026-06-10","category":"Utilities"}
+{"account_id":"A011","description":"John Lewis - Home Furnishings","amount":-420.0,"type":"debit","date":"2026-06-14","category":"Shopping"}
+{"account_id":"A011","description":"Restaurant - Local","amount":-78.5,"type":"debit","date":"2026-06-20","category":"Dining Out"}
+{"account_id":"A013","description":"Pension - NHS","amount":3800.0,"type":"credit","date":"2026-03-01","category":"Income"}
+{"account_id":"A013","description":"Council Tax - Bristol","amount":-175.0,"type":"debit","date":"2026-03-05","category":"Housing"}
+{"account_id":"A013","description":"M&S Food","amount":-195.4,"type":"debit","date":"2026-03-10","category":"Groceries"}
+{"account_id":"A013","description":"First Great Western","amount":-128.0,"type":"debit","date":"2026-03-12","category":"Transport"}
+{"account_id":"A013","description":"British Gas","amount":-145.0,"type":"debit","date":"2026-03-08","category":"Utilities"}
+{"account_id":"A013","description":"Private Health Insurance - BUPA","amount":-89.0,"type":"debit","date":"2026-03-15","category":"Health & Fitness"}
+{"account_id":"A013","description":"Restaurant - Casamia Bristol","amount":-145.0,"type":"debit","date":"2026-03-22","category":"Dining Out"}
+{"account_id":"A014","description":"ISA Dividend","amount":270.0,"type":"credit","date":"2026-03-31","category":"Income"}
+{"account_id":"A015","description":"Bond Interest","amount":130.0,"type":"credit","date":"2026-03-31","category":"Income"}
+{"account_id":"A013","description":"Pension - NHS","amount":3800.0,"type":"credit","date":"2026-04-01","category":"Income"}
+{"account_id":"A013","description":"Council Tax - Bristol","amount":-175.0,"type":"debit","date":"2026-04-05","category":"Housing"}
+{"account_id":"A013","description":"M&S Food","amount":-188.6,"type":"debit","date":"2026-04-12","category":"Groceries"}
+{"account_id":"A013","description":"British Gas","amount":-138.0,"type":"debit","date":"2026-04-08","category":"Utilities"}
+{"account_id":"A013","description":"Private Health Insurance - BUPA","amount":-89.0,"type":"debit","date":"2026-04-15","category":"Health & Fitness"}
+{"account_id":"A013","description":"Holiday - Saga Travel","amount":-2200.0,"type":"debit","date":"2026-04-20","category":"Travel"}
+{"account_id":"A013","description":"Pension - NHS","amount":3800.0,"type":"credit","date":"2026-05-01","category":"Income"}
+{"account_id":"A013","description":"Council Tax - Bristol","amount":-175.0,"type":"debit","date":"2026-05-05","category":"Housing"}
+{"account_id":"A013","description":"M&S Food","amount":-204.5,"type":"debit","date":"2026-05-09","category":"Groceries"}
+{"account_id":"A013","description":"British Gas","amount":-132.0,"type":"debit","date":"2026-05-08","category":"Utilities"}
+{"account_id":"A013","description":"Private Health Insurance - BUPA","amount":-89.0,"type":"debit","date":"2026-05-15","category":"Health & Fitness"}
+{"account_id":"A013","description":"Dentist - Private","amount":-220.0,"type":"debit","date":"2026-05-18","category":"Health & Fitness"}
+{"account_id":"A013","description":"Pension - NHS","amount":3800.0,"type":"credit","date":"2026-06-01","category":"Income"}
+{"account_id":"A013","description":"Council Tax - Bristol","amount":-175.0,"type":"debit","date":"2026-06-05","category":"Housing"}
+{"account_id":"A013","description":"M&S Food","amount":-198.2,"type":"debit","date":"2026-06-10","category":"Groceries"}
+{"account_id":"A013","description":"British Gas","amount":-128.0,"type":"debit","date":"2026-06-08","category":"Utilities"}
+{"account_id":"A013","description":"Private Health Insurance - BUPA","amount":-89.0,"type":"debit","date":"2026-06-15","category":"Health & Fitness"}
+{"account_id":"A013","description":"Amazon","amount":-65.0,"type":"debit","date":"2026-06-18","category":"Shopping"}
+{"account_id":"A016","description":"Salary - Glasgow City Council","amount":3200.0,"type":"credit","date":"2026-03-01","category":"Income"}
+{"account_id":"A016","description":"Rent - West End Flats","amount":-900.0,"type":"debit","date":"2026-03-01","category":"Housing"}
+{"account_id":"A016","description":"Council Tax - Glasgow","amount":-138.0,"type":"debit","date":"2026-03-05","category":"Housing"}
+{"account_id":"A016","description":"Sainsbury's","amount":-112.5,"type":"debit","date":"2026-03-10","category":"Groceries"}
+{"account_id":"A016","description":"ScotRail","amount":-65.0,"type":"debit","date":"2026-03-12","category":"Transport"}
+{"account_id":"A016","description":"Scottish Power","amount":-82.0,"type":"debit","date":"2026-03-10","category":"Utilities"}
+{"account_id":"A016","description":"Spotify","amount":-9.99,"type":"debit","date":"2026-03-15","category":"Entertainment"}
+{"account_id":"A016","description":"Nando's","amount":-34.5,"type":"debit","date":"2026-03-22","category":"Dining Out"}
+{"account_id":"A017","description":"Savings Transfer","amount":200.0,"type":"credit","date":"2026-03-28","category":"Savings"}
+{"account_id":"A016","description":"Salary - Glasgow City Council","amount":3200.0,"type":"credit","date":"2026-04-01","category":"Income"}
+{"account_id":"A016","description":"Rent - West End Flats","amount":-900.0,"type":"debit","date":"2026-04-01","category":"Housing"}
+{"account_id":"A016","description":"Council Tax - Glasgow","amount":-138.0,"type":"debit","date":"2026-04-05","category":"Housing"}
+{"account_id":"A016","description":"Childcare - Tiny Tots Nursery","amount":-800.0,"type":"debit","date":"2026-04-14","category":"Childcare"}
+{"account_id":"A016","description":"Boots - Baby Essentials","amount":-145.8,"type":"debit","date":"2026-04-10","category":"Shopping"}
+{"account_id":"A016","description":"NHS Prescription","amount":-9.9,"type":"debit","date":"2026-04-07","category":"Health & Fitness"}
+{"account_id":"A016","description":"Mothercare","amount":-234.5,"type":"debit","date":"2026-04-20","category":"Shopping"}
+{"account_id":"A016","description":"Sainsbury's","amount":-145.6,"type":"debit","date":"2026-04-15","category":"Groceries"}
+{"account_id":"A016","description":"Scottish Power","amount":-80.0,"type":"debit","date":"2026-04-10","category":"Utilities"}
+{"account_id":"A016","description":"Salary - Glasgow City Council","amount":3200.0,"type":"credit","date":"2026-05-01","category":"Income"}
+{"account_id":"A016","description":"Rent - West End Flats","amount":-900.0,"type":"debit","date":"2026-05-01","category":"Housing"}
+{"account_id":"A016","description":"Council Tax - Glasgow","amount":-138.0,"type":"debit","date":"2026-05-05","category":"Housing"}
+{"account_id":"A016","description":"Childcare - Tiny Tots Nursery","amount":-800.0,"type":"debit","date":"2026-05-14","category":"Childcare"}
+{"account_id":"A016","description":"Sainsbury's","amount":-138.4,"type":"debit","date":"2026-05-12","category":"Groceries"}
+{"account_id":"A016","description":"Scottish Power","amount":-78.0,"type":"debit","date":"2026-05-10","category":"Utilities"}
+{"account_id":"A016","description":"Boots - Baby Essentials","amount":-68.5,"type":"debit","date":"2026-05-18","category":"Shopping"}
+{"account_id":"A016","description":"NHS Prescription","amount":-9.9,"type":"debit","date":"2026-05-20","category":"Health & Fitness"}
+{"account_id":"A016","description":"Salary - Glasgow City Council","amount":3200.0,"type":"credit","date":"2026-06-01","category":"Income"}
+{"account_id":"A016","description":"Rent - West End Flats","amount":-900.0,"type":"debit","date":"2026-06-01","category":"Housing"}
+{"account_id":"A016","description":"Council Tax - Glasgow","amount":-138.0,"type":"debit","date":"2026-06-05","category":"Housing"}
+{"account_id":"A016","description":"Childcare - Tiny Tots Nursery","amount":-800.0,"type":"debit","date":"2026-06-14","category":"Childcare"}
+{"account_id":"A016","description":"Sainsbury's","amount":-152.3,"type":"debit","date":"2026-06-12","category":"Groceries"}
+{"account_id":"A016","description":"Scottish Power","amount":-76.0,"type":"debit","date":"2026-06-10","category":"Utilities"}
+{"account_id":"A016","description":"Amazon - Baby Gear","amount":-112.0,"type":"debit","date":"2026-06-18","category":"Shopping"}
+{"account_id":"A018","description":"Salary - Oxford Analytics","amount":8000.0,"type":"credit","date":"2026-03-01","category":"Income"}
+{"account_id":"A018","description":"Rent - Oxford Premium Flats","amount":-1800.0,"type":"debit","date":"2026-03-01","category":"Housing"}
+{"account_id":"A018","description":"Council Tax - Oxford","amount":-210.0,"type":"debit","date":"2026-03-05","category":"Housing"}
+{"account_id":"A018","description":"Waitrose","amount":-220.5,"type":"debit","date":"2026-03-09","category":"Groceries"}
+{"account_id":"A018","description":"BMW Finance","amount":-650.0,"type":"debit","date":"2026-03-10","category":"Transport"}
+{"account_id":"A018","description":"EDF Energy","amount":-145.0,"type":"debit","date":"2026-03-12","category":"Utilities"}
+{"account_id":"A018","description":"Restaurant - Quod Oxford","amount":-185.0,"type":"debit","date":"2026-03-20","category":"Dining Out"}
+{"account_id":"A018","description":"John Lewis","amount":-325.0,"type":"debit","date":"2026-03-22","category":"Shopping"}
+{"account_id":"A019","description":"Savings Transfer","amount":1500.0,"type":"credit","date":"2026-03-28","category":"Savings"}
+{"account_id":"A018","description":"Salary - Oxford Analytics","amount":8000.0,"type":"credit","date":"2026-04-01","category":"Income"}
+{"account_id":"A018","description":"Rent - Oxford Premium Flats","amount":-1800.0,"type":"debit","date":"2026-04-01","category":"Housing"}
+{"account_id":"A018","description":"Council Tax - Oxford","amount":-210.0,"type":"debit","date":"2026-04-05","category":"Housing"}
+{"account_id":"A018","description":"Waitrose","amount":-234.8,"type":"debit","date":"2026-04-09","category":"Groceries"}
+{"account_id":"A018","description":"BMW Finance","amount":-650.0,"type":"debit","date":"2026-04-10","category":"Transport"}
+{"account_id":"A018","description":"EDF Energy","amount":-140.0,"type":"debit","date":"2026-04-12","category":"Utilities"}
+{"account_id":"A018","description":"Restaurant - Le Manoir","amount":-420.0,"type":"debit","date":"2026-04-26","category":"Dining Out"}
+{"account_id":"A018","description":"Amazon","amount":-245.0,"type":"debit","date":"2026-04-28","category":"Shopping"}
+{"account_id":"A019","description":"Savings Transfer","amount":1500.0,"type":"credit","date":"2026-04-28","category":"Savings"}
+{"account_id":"A018","description":"Estate - Probate Transfer","amount":45000.0,"type":"credit","date":"2026-05-12","category":"Income"}
+{"account_id":"A018","description":"Salary - Oxford Analytics","amount":8000.0,"type":"credit","date":"2026-05-01","category":"Income"}
+{"account_id":"A018","description":"Rent - Oxford Premium Flats","amount":-1800.0,"type":"debit","date":"2026-05-01","category":"Housing"}
+{"account_id":"A018","description":"Council Tax - Oxford","amount":-210.0,"type":"debit","date":"2026-05-05","category":"Housing"}
+{"account_id":"A018","description":"Waitrose","amount":-198.5,"type":"debit","date":"2026-05-10","category":"Groceries"}
+{"account_id":"A018","description":"BMW Finance","amount":-650.0,"type":"debit","date":"2026-05-10","category":"Transport"}
+{"account_id":"A018","description":"EDF Energy","amount":-135.0,"type":"debit","date":"2026-05-12","category":"Utilities"}
+{"account_id":"A018","description":"Financial Adviser - Consultation","amount":-500.0,"type":"debit","date":"2026-05-20","category":"Other"}
+{"account_id":"A019","description":"Savings Transfer","amount":5000.0,"type":"credit","date":"2026-05-28","category":"Savings"}
+{"account_id":"A018","description":"Salary - Oxford Analytics","amount":8000.0,"type":"credit","date":"2026-06-01","category":"Income"}
+{"account_id":"A018","description":"Rent - Oxford Premium Flats","amount":-1800.0,"type":"debit","date":"2026-06-01","category":"Housing"}
+{"account_id":"A018","description":"Council Tax - Oxford","amount":-210.0,"type":"debit","date":"2026-06-05","category":"Housing"}
+{"account_id":"A018","description":"Waitrose","amount":-215.6,"type":"debit","date":"2026-06-10","category":"Groceries"}
+{"account_id":"A018","description":"BMW Finance","amount":-650.0,"type":"debit","date":"2026-06-10","category":"Transport"}
+{"account_id":"A018","description":"EDF Energy","amount":-138.0,"type":"debit","date":"2026-06-12","category":"Utilities"}
+{"account_id":"A018","description":"Holiday - First Class Flights","amount":-3200.0,"type":"debit","date":"2026-06-15","category":"Travel"}
+{"account_id":"A018","description":"Restaurant - Blenheim","amount":-320.0,"type":"debit","date":"2026-06-20","category":"Dining Out"}
+{"account_id":"A019","description":"Savings Transfer","amount":5000.0,"type":"credit","date":"2026-06-22","category":"Savings"}
