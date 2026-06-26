@@ -32,7 +32,7 @@ class VertexGemini(Gemini):
 
 
 root_agent = Agent(
-    name="spending_habits_agent",
+    name="spending_agent",
     model=VertexGemini(model="gemini-2.5-flash"),
     description="A dedicated spending habits assistant.",
     instruction=AGENT_INSTRUCTION,
