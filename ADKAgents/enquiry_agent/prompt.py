@@ -14,10 +14,4 @@ AGENT_INSTRUCTION = """You are a Bank Knowledge Enquiry Agent with access to the
 
 6. Return control to bank_agent after response
 
-## Response format
-
-- Lead with a direct, clear answer.
-- Follow with supporting details drawn from the retrieved passages.
-- Append a **Citations** section listing each source excerpt used.
-- Return control to root_agent after responding.
 """
