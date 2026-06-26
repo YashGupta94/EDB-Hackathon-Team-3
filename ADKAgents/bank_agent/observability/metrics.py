@@ -67,6 +67,8 @@ class ObservabilityStore:
         self._llm_calls: list[LlmCallRecord] = []
         self._tool_calls: list[ToolCallRecord] = []
         self._sessions: dict[str, _SessionBucket] = {}
+        # Arbitrary per-session metadata (e.g. customer_id)
+        self._session_meta: dict[str, dict[str, Any]] = {}
 
     # -- recording ----------------------------------------------------------
 
@@ -213,6 +215,22 @@ class ObservabilityStore:
             self._llm_calls.clear()
             self._tool_calls.clear()
             self._sessions.clear()
+            self._session_meta.clear()
+
+    # -- session metadata -------------------------------------------------
+
+    def set_session_meta(self, session_id: str, meta: dict[str, Any]) -> None:
+        """Set arbitrary metadata for a session (overwrites existing keys)."""
+        with self._lock:
+            cur = self._session_meta.setdefault(session_id, {})
+            cur.update(meta)
+
+    def get_session_meta(self, session_id: str) -> dict[str, Any] | None:
+        """Return metadata for a session or None if not set."""
+        with self._lock:
+            meta = self._session_meta.get(session_id)
+            # return a shallow copy to avoid external mutation
+            return dict(meta) if meta is not None else None
 
 
 # ---------------------------------------------------------------------------
